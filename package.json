@@ -1,0 +1,17 @@
+{
+  "name": "baby-names-tournament",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "live-server src --open=index.html"
+  },
+  "dependencies": {
+    "live-server": "^1.2.2",
+    "serve": "^14.2.6"
+  }
+}

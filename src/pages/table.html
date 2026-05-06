@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Добавление имён</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  
+  <header class="page-header">
+    <h1>Страница имён</h1> 
+  </header>
+
+  <div class="sections-wrapper">
+    
+    <!-- Мальчики -->
+    <section id="boys-section" class="section">
+      
+      <div class="section__header">
+        <span class="section__icon"></span>
+        <h2 class="section__title">Мальчики</h2>
+      </div>
+      
+      <div class="section__input-row">
+        <input
+        id="boys-input"
+        class="section__input"
+        type="text"
+        placeholder="Введите имя…"
+        >
+        <button id="boys-add-btn" class="section__add-btn">Добавить</button>
+      </div>
+      
+      <div>
+        <p class="section__list-label">Уже добавлены:</p>
+        <ul id="boys-list" class="section__list">
+          <!-- Гененируется в table.js 
+          
+          Пример:
+          <li class="name-item">
+            <span class="name-text">Андрей</span>
+            <button class="remove-btn" aria-label="Удалить">✕</button>
+          </li>
+          --> 
+        </ul>
+      </div>
+      
+      <div class="section__counter">
+        Добавлено:&nbsp;<span id="boys-count" class="section__counter-value">0</span>&nbsp;имён
+      </div>
+      
+    </section>  
+    
+    <!-- ───────── Девочки ───────── -->
+    <section id="girls-section" class="section">
+      
+      <div class="section__header">
+        <span class="section__icon"></span>
+        <h2 class="section__title">Девочки</h2>
+      </div>
+      
+      <div class="section__input-row">
+        <input
+        id="girls-input"
+        class="section__input"
+        type="text"
+        placeholder="Введите имя…"
+        >
+        <button id="girls-add-btn" class="section__add-btn">Добавить</button>
+      </div>
+      
+      <div>
+        <p class="section__list-label">Уже добавлены:</p>
+        <ul id="girls-list" class="section__list">
+        </ul>
+      </div>
+      
+      <div class="section__counter">
+        Добавлено:&nbsp;<span id="girls-count" class="section__counter-value">0</span>&nbsp;имён
+      </div>
+      
+    </section>
+    
+  </div>
+  
+  <div class="finish-wrapper">
+    <button id="finish-btn">Завершить добавление</button>
+  </div>
+  
+  <script src="../features/table.js"></script>
+</body>
+</html>
