@@ -1,0 +1,24 @@
+flowchart TD
+    subgraph Area1 [Winner Bracket]
+    match0 --> |winner| match8 --> |winner| match12 --> |winner| match14
+    match1 --> |winner| match8
+    match2 --> |winner| match9 --> |winner| match12
+    match3 --> |winner| match9
+    match4 --> |winner| match10 --> |winner| match13 --> |winner| match14
+    match5 --> |winner| match10
+    match6 --> |winner| match11 --> |winner| match13
+    match7 --> |winner| match11
+    end
+
+    subgraph Area2 [Loaer Bracket]
+    match100["match100: losers from 0 and 1"] --> match104["match104: loser from match11"] --> match108 --> match110["match110: loser from match12"] --> match112 --> match113["match113: loser from match14"]
+    match101["match101: losers from 2 and 3"] --> match105["match105: loser from match10"] --> match108
+    match102["match102: losers from 4 and 5"] --> match106["match106: loser from match9"] --> match109 --> match111["match111: loser from match13"] --> match112
+    match103["match103: losers from 5 and 6"] --> match107["match107: loser from match8"] --> match109
+    end
+
+    subgraph Area3 [Grand Final]
+    grandFinal["match1000"]
+    match14 --> grandFinal
+    match113 --> grandFinal
+    end

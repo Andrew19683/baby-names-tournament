@@ -94,5 +94,4 @@ Thumbs.db
 src/templates*
 src/features/participants.js
 baby-names.html
-*.mmd
 *.png

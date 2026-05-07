@@ -1,3 +1,5 @@
+import validate from "./validate.js";
+
 function startTournament() {
   // Вычисляем следующую степень двойки, которая больше или равна длине массива
   // За счёт этого определим вид турнира
@@ -29,6 +31,7 @@ function generateMatches() {
 
   let participatsForRound = names.length; // количество участников для текущего раунда
 
+  // создаём матчи верхней сетки
   while (participatsForRound >= 2) {
     ({ matchId, nextLoserMatchId: loserMatchId } = generateUpperRound(
       matches,
@@ -40,7 +43,21 @@ function generateMatches() {
     participatsForRound /= 2;
     round++;
   }
-  console.log(matches);
+
+  // создаём матчи нижней сетки
+  matchId = 100; // начинаем с id 100 для нижней сетки
+  round = 1; // раунды нижней сетки считаем заново
+  participatsForRound = names.length / 2; // в нижней сетке изначально половина участников
+  while (participatsForRound >= 2) {
+    matchId = generateLowerRound(matches, participatsForRound, matchId, round);
+    if (round % 2 === 0) {
+      participatsForRound /= 2;
+    }
+    round++;
+  }
+
+  validate(names.length, matches);
+  // console.log(matches);
 }
 
 function generateUpperRound(
@@ -50,7 +67,7 @@ function generateUpperRound(
   round,
   nextLoserMatchId,
 ) {
-  console.log(nextLoserMatchId);
+  // console.log(nextLoserMatchId);
   let finalMatch = false;
   let nextWinnerMatchId;
   if (participants === 2) {
@@ -87,16 +104,53 @@ function generateUpperRound(
       }
     } else {
       match.isGridFinal = true;
+      match.winnerGoesId = 1000; // id гранд финала
     }
     matches.push(match);
   }
-  console.log(nextLoserMatchId);
+  // console.log(nextLoserMatchId);
   return { matchId, nextLoserMatchId };
+}
+
+function generateLowerRound(matches, participants, matchId, round) {
+  let finalMatch = false;
+  let nextWinnerMatchId;
+  if (participants === 2 && round % 2 === 0) {
+    finalMatch = true;
+  } else {
+    nextWinnerMatchId = matchId + participants / 2;
+  }
+
+  for (let i = 0; i < participants / 2; i++) {
+    const match = {
+      id: matchId++,
+      round: round,
+      grid: "lower",
+      status: "pending",
+    };
+    if (!finalMatch) {
+      match.player1 = null;
+      match.player2 = null;
+      match.winnerGoesId = Math.trunc(nextWinnerMatchId);
+      if (round % 2 === 0) {
+        nextWinnerMatchId += 0.5;
+      } else {
+        nextWinnerMatchId += 1;
+      }
+    } else {
+      match.isGridFinal = true;
+      match.winnerGoesId = 1000; // id гранд финала
+    }
+
+    matches.push(match);
+  }
+
+  return matchId;
 }
 
 let names =
   JSON.parse(`[{"name":"Алексей","gender":"m","round":0,"grid":"upper"},{"name":"Борис","gender":"m","round":0,"grid":"upper"},{"name":"Владимир","gender":"m","round":0,"grid":"upper"},{"name":"Григорий","gender":"m","round":0,"grid":"upper"},{"name":"Дмитрий","gender":"m","round":0,"grid":"upper"},{"name":"Евгений","gender":"m","round":0,"grid":"upper"},{"name":"Жан","gender":"m","round":0,"grid":"upper"},{"name":"Зак","gender":"m","round":0,"grid":"upper"},{"name":"Илья","gender":"m","round":0,"grid":"upper"},{"name":"Кирилл","gender":"m","round":0,"grid":"upper"},{"name":"Леонид","gender":"m","round":0,"grid":"upper"}]
 `); // пока let, потом будем работать с localStorage и туда всё регулярно сохранять
-names = names.slice(0, 7); // для теста
+// names = names.slice(0, 7); // для теста
 startTournament();
 generateMatches();
