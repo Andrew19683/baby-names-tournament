@@ -1,4 +1,6 @@
-const NAMES = JSON.parse(localStorage.getItem("names")) || [];
+import { generateMatches, startTournament } from "./tournament.js";
+
+const names = JSON.parse(localStorage.getItem("names")) || [];
 
 const inputBoyNode = document.getElementById("boys-input");
 const inputGirlNode = document.getElementById("girls-input");
@@ -20,7 +22,7 @@ class Name {
 
 function printBoys() {
   ulBoysNode.innerHTML = "";
-  const boyNames = NAMES.filter((name) => name.gender === "m");
+  const boyNames = names.filter((name) => name.gender === "m");
   boyNames.forEach((name) => {
     const li = document.createElement("li");
     li.classList.add("name-item");
@@ -34,9 +36,9 @@ function printBoys() {
     btnDel.textContent = "✕";
     btnDel.id = `delete-${name.name}`;
     btnDel.addEventListener("click", function () {
-      const index = NAMES.findIndex((n) => n.name === name.name);
+      const index = names.findIndex((n) => n.name === name.name);
       if (index !== -1) {
-        NAMES.splice(index, 1);
+        names.splice(index, 1);
         localStorage.setItem("names", JSON.stringify(NAMES));
         printBoys();
       }
@@ -51,7 +53,7 @@ function printBoys() {
 
 function printGirls() {
   ulGirlsNode.innerHTML = "";
-  const girlNames = NAMES.filter((name) => name.gender === "f");
+  const girlNames = names.filter((name) => name.gender === "f");
   girlNames.forEach((name) => {
     const li = document.createElement("li");
     li.classList.add("name-item");
@@ -65,10 +67,10 @@ function printGirls() {
     btnDel.textContent = "✕";
     btnDel.id = `delete-${name.name}`;
     btnDel.addEventListener("click", function () {
-      const index = NAMES.findIndex((n) => n.name === name.name);
+      const index = names.findIndex((n) => n.name === name.name);
       if (index !== -1) {
-        NAMES.splice(index, 1);
-        localStorage.setItem("names", JSON.stringify(NAMES));
+        names.splice(index, 1);
+        localStorage.setItem("names", JSON.stringify(names));
         printGirls();
       }
     });
@@ -89,8 +91,8 @@ btnAddBoy.addEventListener("click", function () {
 
   const name = new Name(inputValue, "m", 0, "upper");
 
-  NAMES.push(name);
-  localStorage.setItem("names", JSON.stringify(NAMES));
+  names.push(name);
+  localStorage.setItem("names", JSON.stringify(names));
   printBoys();
 });
 
@@ -103,8 +105,8 @@ btnAddGirl.addEventListener("click", function () {
 
   const name = new Name(inputValue, "f", 0, "upper");
 
-  NAMES.push(name);
-  localStorage.setItem("names", JSON.stringify(NAMES));
+  names.push(name);
+  localStorage.setItem("names", JSON.stringify(names));
   printGirls();
 });
 

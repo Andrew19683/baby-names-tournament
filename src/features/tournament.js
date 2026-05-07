@@ -1,6 +1,6 @@
 import validate from "./validate.js";
 
-function startTournament() {
+export function startTournament() {
   // Вычисляем следующую степень двойки, которая больше или равна длине массива
   // За счёт этого определим вид турнира
   const nextPowerOfTwo = Math.pow(2, Math.ceil(Math.log2(names.length)));
@@ -23,7 +23,7 @@ function startTournament() {
   return names;
 }
 
-function generateMatches() {
+export function generateMatches() {
   const matches = []; // сюда закидываем все созданные матчи
   let matchId = 0; // глобальный счетчик матчей верхней сетки
   let round = 1; // текущий раунд
