@@ -56,6 +56,9 @@ function generateMatches() {
     round++;
   }
 
+  // и финальный матч
+  matches.push({ id: 1000, round: 1, player1: null, player2: null });
+
   validate(names.length, matches);
   // console.log(matches);
 }
@@ -76,7 +79,16 @@ function generateUpperRound(
     nextWinnerMatchId = matchId + participants / 2;
   }
 
+  if (round > 2) {
+    nextLoserMatchId += participants / 2; // после 2 раунда в лузерах всегда будет дополнительный раунд между собой, который надо пропустить
+  }
+
   for (let i = 0; i < participants / 2; i++) {
+    if (matchId === 14) {
+      console.log(`nextLoserMatchId: ${nextLoserMatchId}
+        participants: ${participants}
+        round: ${round}`);
+    }
     const match = {
       id: matchId++,
       round: round,
@@ -95,19 +107,25 @@ function generateUpperRound(
       nextWinnerMatchId += 0.5;
       if (round % 2 === 1) {
         match.loserGoesId = Math.trunc(nextLoserMatchId);
-        nextLoserMatchId += 0.5;
+        if (round % 4 === 3) {
+          nextLoserMatchId += 1;
+        } else {
+          nextLoserMatchId += 0.5;
+        }
       } else {
         match.loserGoesId = Math.trunc(
-          nextLoserMatchId + participants / 4 - i * 2,
+          nextLoserMatchId + participants / 2 - i * 2 - 1, // закидываем в обратном порядке для чэтных раундов, чтобы уменьшить шанс повторной встречи участников
         );
         nextLoserMatchId += 1;
       }
     } else {
       match.isGridFinal = true;
       match.winnerGoesId = 1000; // id гранд финала
+      match.loserGoesId = Math.trunc(nextLoserMatchId);
     }
     matches.push(match);
   }
+
   // console.log(nextLoserMatchId);
   return { matchId, nextLoserMatchId };
 }
@@ -151,6 +169,6 @@ function generateLowerRound(matches, participants, matchId, round) {
 let names =
   JSON.parse(`[{"name":"Алексей","gender":"m","round":0,"grid":"upper"},{"name":"Борис","gender":"m","round":0,"grid":"upper"},{"name":"Владимир","gender":"m","round":0,"grid":"upper"},{"name":"Григорий","gender":"m","round":0,"grid":"upper"},{"name":"Дмитрий","gender":"m","round":0,"grid":"upper"},{"name":"Евгений","gender":"m","round":0,"grid":"upper"},{"name":"Жан","gender":"m","round":0,"grid":"upper"},{"name":"Зак","gender":"m","round":0,"grid":"upper"},{"name":"Илья","gender":"m","round":0,"grid":"upper"},{"name":"Кирилл","gender":"m","round":0,"grid":"upper"},{"name":"Леонид","gender":"m","round":0,"grid":"upper"}]
 `); // пока let, потом будем работать с localStorage и туда всё регулярно сохранять
-// names = names.slice(0, 7); // для теста
+names = names.slice(0, 7); // для теста
 startTournament();
 generateMatches();
