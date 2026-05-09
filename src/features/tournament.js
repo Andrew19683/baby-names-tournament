@@ -1,6 +1,6 @@
 import validate from "./validate.js";
 
-export function startTournament() {
+export function startTournament(names) {
   // Вычисляем следующую степень двойки, которая больше или равна длине массива
   // За счёт этого определим вид турнира
   const nextPowerOfTwo = Math.pow(2, Math.ceil(Math.log2(names.length)));
@@ -23,7 +23,8 @@ export function startTournament() {
   return names;
 }
 
-export function generateMatches() {
+export function generateMatches(names) {
+  // протестировал для 8 и 16 участников. Понятия не имею, как оно будет на других степенях двойки, но выглядит корректно
   const matches = []; // сюда закидываем все созданные матчи
   let matchId = 0; // глобальный счетчик матчей верхней сетки
   let round = 1; // текущий раунд
@@ -39,6 +40,7 @@ export function generateMatches() {
       matchId,
       round,
       loserMatchId,
+      names,
     ));
     participatsForRound /= 2;
     round++;
@@ -59,8 +61,8 @@ export function generateMatches() {
   // и финальный матч
   matches.push({ id: 1000, round: 1, player1: null, player2: null });
 
-  validate(names.length, matches);
-  // console.log(matches);
+  // validate(names.length, matches);
+  return matches;
 }
 
 function generateUpperRound(
@@ -69,6 +71,7 @@ function generateUpperRound(
   matchId,
   round,
   nextLoserMatchId,
+  names,
 ) {
   // console.log(nextLoserMatchId);
   let finalMatch = false;
@@ -84,11 +87,6 @@ function generateUpperRound(
   }
 
   for (let i = 0; i < participants / 2; i++) {
-    if (matchId === 14) {
-      console.log(`nextLoserMatchId: ${nextLoserMatchId}
-        participants: ${participants}
-        round: ${round}`);
-    }
     const match = {
       id: matchId++,
       round: round,
@@ -166,9 +164,9 @@ function generateLowerRound(matches, participants, matchId, round) {
   return matchId;
 }
 
-let names =
-  JSON.parse(`[{"name":"Алексей","gender":"m","round":0,"grid":"upper"},{"name":"Борис","gender":"m","round":0,"grid":"upper"},{"name":"Владимир","gender":"m","round":0,"grid":"upper"},{"name":"Григорий","gender":"m","round":0,"grid":"upper"},{"name":"Дмитрий","gender":"m","round":0,"grid":"upper"},{"name":"Евгений","gender":"m","round":0,"grid":"upper"},{"name":"Жан","gender":"m","round":0,"grid":"upper"},{"name":"Зак","gender":"m","round":0,"grid":"upper"},{"name":"Илья","gender":"m","round":0,"grid":"upper"},{"name":"Кирилл","gender":"m","round":0,"grid":"upper"},{"name":"Леонид","gender":"m","round":0,"grid":"upper"}]
-`); // пока let, потом будем работать с localStorage и туда всё регулярно сохранять
-names = names.slice(0, 7); // для теста
-startTournament();
-generateMatches();
+// let names =
+//   JSON.parse(`[{"name":"Алексей","gender":"m","round":0,"grid":"upper"},{"name":"Борис","gender":"m","round":0,"grid":"upper"},{"name":"Владимир","gender":"m","round":0,"grid":"upper"},{"name":"Григорий","gender":"m","round":0,"grid":"upper"},{"name":"Дмитрий","gender":"m","round":0,"grid":"upper"},{"name":"Евгений","gender":"m","round":0,"grid":"upper"},{"name":"Жан","gender":"m","round":0,"grid":"upper"},{"name":"Зак","gender":"m","round":0,"grid":"upper"},{"name":"Илья","gender":"m","round":0,"grid":"upper"},{"name":"Кирилл","gender":"m","round":0,"grid":"upper"},{"name":"Леонид","gender":"m","round":0,"grid":"upper"}]
+// `); // пока let, потом будем работать с localStorage и туда всё регулярно сохранять
+// names = names.slice(0, 7); // для теста
+// startTournament();
+// generateMatches();

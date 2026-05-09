@@ -112,3 +112,6 @@ btnAddGirl.addEventListener("click", function () {
 
 printBoys();
 printGirls();
+
+startTournament(names);
+generateMatches(names);
