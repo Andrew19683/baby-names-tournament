@@ -95,3 +95,5 @@ src/templates*
 src/features/participants.js
 baby-names.html
 *.png
+matches.json
+names.json

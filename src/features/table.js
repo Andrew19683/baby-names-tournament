@@ -10,14 +10,20 @@ const ulBoysNode = document.getElementById("boys-list");
 const ulGirlsNode = document.getElementById("girls-list");
 const spanBoysCounterNode = document.getElementById("boys-count");
 const spanGirlsCounterNode = document.getElementById("girls-count");
+const btnStartTournament = document.getElementById("finish-btn");
 
 class Name {
-  constructor(name, gender, round = 0, grid = "upper") {
+  constructor(name, gender, grid = "upper") {
     this.name = name;
     this.gender = gender;
-    this.round = round;
-    this.grid = grid;
+    // this.round = round; // заметил, что я round не использую нигде с именами. Пока коммент
+    this.grid = grid; // вероятно, это тоже можно удалить
+    // стоит добавить description, который будет редактироваться даже после завершения добавления имён
   }
+}
+
+function saveNames(names) {
+  localStorage.setItem("names", JSON.stringify(names));
 }
 
 function printBoys() {
@@ -39,7 +45,7 @@ function printBoys() {
       const index = names.findIndex((n) => n.name === name.name);
       if (index !== -1) {
         names.splice(index, 1);
-        localStorage.setItem("names", JSON.stringify(NAMES));
+        saveNames(names);
         printBoys();
       }
     });
@@ -70,7 +76,7 @@ function printGirls() {
       const index = names.findIndex((n) => n.name === name.name);
       if (index !== -1) {
         names.splice(index, 1);
-        localStorage.setItem("names", JSON.stringify(names));
+        saveNames(names);
         printGirls();
       }
     });
@@ -92,7 +98,7 @@ btnAddBoy.addEventListener("click", function () {
   const name = new Name(inputValue, "m", 0, "upper");
 
   names.push(name);
-  localStorage.setItem("names", JSON.stringify(names));
+  saveNames(names);
   printBoys();
 });
 
@@ -106,12 +112,21 @@ btnAddGirl.addEventListener("click", function () {
   const name = new Name(inputValue, "f", 0, "upper");
 
   names.push(name);
-  localStorage.setItem("names", JSON.stringify(names));
+  saveNames(names);
   printGirls();
+});
+
+btnStartTournament.addEventListener("click", function () {
+  const boys = names.filter((name) => name.gender === "m");
+  const girls = names.filter((name) => name.gender === "f");
+  startTournament(boys);
+  startTournament(girls);
+  saveNames([...boys, ...girls]);
+  const matches = {};
+  matches.boys = generateMatches(boys);
+  matches.girls = generateMatches(girls);
+  localStorage.setItem("matches", JSON.stringify(matches));
 });
 
 printBoys();
 printGirls();
-
-startTournament(names);
-generateMatches(names);

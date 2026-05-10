@@ -91,14 +91,15 @@ function generateUpperRound(
       id: matchId++,
       round: round,
       grid: "upper",
-      status: "pending",
     };
     if (round === 1) {
       match.player1 = names[i];
       match.player2 = names[participants - 1 - i];
+      match.status = "readyToPlay";
     } else {
       match.player1 = null;
       match.player2 = null;
+      match.status = "pending";
     }
     if (!finalMatch) {
       match.winnerGoesId = Math.trunc(nextWinnerMatchId);
