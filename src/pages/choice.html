@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Выбор имени</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="../style.css">
+</head>
+
+<!--
+  Класс на <body> определяет цветовую схему:
+    gender-boys  → голубой акцент
+    gender-girls → розовый акцент
+  JS переключает его в зависимости от текущего матча.
+-->
+<body class="gender-boys">
+
+  <header class="page-header">
+    <h1>Выбери имя, которое больше нравится</h1>
+  </header>
+
+  <main class="choice-wrapper">
+
+    <div class="name-cards">
+
+      <div id="name-card-1" class="name-card">
+        <span class="name-card__text">Имя 1</span>
+      </div>
+
+      <span class="name-cards__divider">или</span>
+
+      <div id="name-card-2" class="name-card">
+        <span class="name-card__text">Имя 2</span>
+      </div>
+
+    </div>
+
+    <!--
+      JS снимает disabled после выбора карточки.
+      JS добавляет .name-card--selected на кликнутую карточку
+      и убирает с другой.
+    -->
+    <button id="choose-btn" class="choose-btn" disabled>Выбрать</button>
+
+  </main>
+
+  <script src="../features/choice.js" type="module"></script>
+
+</body>
+</html>

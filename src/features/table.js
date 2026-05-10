@@ -123,9 +123,10 @@ btnStartTournament.addEventListener("click", function () {
   startTournament(girls);
   saveNames([...boys, ...girls]);
   const matches = {};
-  matches.boys = generateMatches(boys);
-  matches.girls = generateMatches(girls);
+  matches.boys = generateMatches(boys, "m");
+  matches.girls = generateMatches(girls, "f");
   localStorage.setItem("matches", JSON.stringify(matches));
+  window.location.href = "choice.html";
 });
 
 printBoys();

@@ -23,7 +23,7 @@ export function startTournament(names) {
   return names;
 }
 
-export function generateMatches(names) {
+export function generateMatches(names, gender) {
   // протестировал для 8 и 16 участников. Понятия не имею, как оно будет на других степенях двойки, но выглядит корректно
   const matches = []; // сюда закидываем все созданные матчи
   let matchId = 0; // глобальный счетчик матчей верхней сетки
@@ -41,6 +41,7 @@ export function generateMatches(names) {
       round,
       loserMatchId,
       names,
+      gender,
     ));
     participatsForRound /= 2;
     round++;
@@ -51,7 +52,13 @@ export function generateMatches(names) {
   round = 1; // раунды нижней сетки считаем заново
   participatsForRound = names.length / 2; // в нижней сетке изначально половина участников
   while (participatsForRound >= 2) {
-    matchId = generateLowerRound(matches, participatsForRound, matchId, round);
+    matchId = generateLowerRound(
+      matches,
+      participatsForRound,
+      matchId,
+      round,
+      gender,
+    );
     if (round % 2 === 0) {
       participatsForRound /= 2;
     }
@@ -59,7 +66,13 @@ export function generateMatches(names) {
   }
 
   // и финальный матч
-  matches.push({ id: 1000, round: 1, player1: null, player2: null });
+  matches.push({
+    id: 1000,
+    round: 1,
+    player1: null,
+    player2: null,
+    gender: gender,
+  });
 
   // validate(names.length, matches);
   return matches;
@@ -72,6 +85,7 @@ function generateUpperRound(
   round,
   nextLoserMatchId,
   names,
+  gender,
 ) {
   // console.log(nextLoserMatchId);
   let finalMatch = false;
@@ -91,6 +105,7 @@ function generateUpperRound(
       id: matchId++,
       round: round,
       grid: "upper",
+      gender: gender,
     };
     if (round === 1) {
       match.player1 = names[i];
@@ -129,7 +144,7 @@ function generateUpperRound(
   return { matchId, nextLoserMatchId };
 }
 
-function generateLowerRound(matches, participants, matchId, round) {
+function generateLowerRound(matches, participants, matchId, round, gender) {
   let finalMatch = false;
   let nextWinnerMatchId;
   if (participants === 2 && round % 2 === 0) {
@@ -144,6 +159,7 @@ function generateLowerRound(matches, participants, matchId, round) {
       round: round,
       grid: "lower",
       status: "pending",
+      gender: gender,
     };
     if (!finalMatch) {
       match.player1 = null;

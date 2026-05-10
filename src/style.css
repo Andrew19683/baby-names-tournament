@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Nunito:wght@400;500;600&display=swap');
 
+.hidden {
+  display: none;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -515,4 +519,191 @@ body {
 .grand-final .bracket__match {
   width: 200px;
   margin: 0;
+}
+
+
+/* ═══════════════════════════════════════════
+   CHOICE PAGE
+   ═══════════════════════════════════════════ */
+
+/* ─── Page wrapper ─── */
+.choice-wrapper {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+/* ─── Cards row ─── */
+.name-cards {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  width: 100%;
+}
+
+.name-cards__divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.25rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+/* ─── Name card ─── */
+.name-card {
+  flex: 1;
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.18s, transform 0.18s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.name-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
+.name-card__text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  line-height: 1;
+  transition: color 0.15s;
+  pointer-events: none; /* клики идут на карточку, не на текст */
+}
+
+/* Hover hint — до выбора */
+.gender-boys .name-card:hover:not(.name-card--selected) {
+  border-color: var(--boys-mid);
+}
+
+.gender-girls .name-card:hover:not(.name-card--selected) {
+  border-color: var(--girls-mid);
+}
+
+/* ─── Selected state ─── */
+.gender-boys .name-card--selected {
+  border-color: var(--boys-accent);
+  background: var(--boys-light);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12), var(--shadow-sm);
+  transform: translateY(-3px);
+}
+
+.gender-boys .name-card--selected .name-card__text {
+  color: var(--boys-dark);
+}
+
+.gender-girls .name-card--selected {
+  border-color: var(--girls-accent);
+  background: var(--girls-light);
+  box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.12), var(--shadow-sm);
+  transform: translateY(-3px);
+}
+
+.gender-girls .name-card--selected .name-card__text {
+  color: var(--girls-dark);
+}
+
+/* ─── Choose button ─── */
+.choose-btn {
+  height: 52px;
+  padding: 0 3.5rem;
+  border-radius: var(--radius-pill);
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+
+/* Disabled — одинаково для обоих полов */
+.choose-btn:disabled {
+  background: var(--border);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Enabled — boys */
+.gender-boys .choose-btn:not(:disabled) {
+  background: var(--boys-accent);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+}
+
+.gender-boys .choose-btn:not(:disabled):hover {
+  background: var(--boys-dark);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.25);
+}
+
+/* Enabled — girls */
+.gender-girls .choose-btn:not(:disabled) {
+  background: var(--girls-accent);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+}
+
+.gender-girls .choose-btn:not(:disabled):hover {
+  background: var(--girls-dark);
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.25);
+}
+
+.choose-btn:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+@media (max-width: 600px) {
+  .name-cards {
+    flex-direction: column;
+  }
+
+  .name-cards__divider {
+    padding: 0.75rem 0;
+  }
+
+  .name-card {
+    padding: 2.5rem 2rem;
+  }
+
+  .name-card__text {
+    font-size: 2.4rem;
+  }
+}
+
+/* ─── Ambient gender theme (видно сразу, без выбора карточки) ─── */
+.gender-boys {
+  background-color: var(--boys-light);
+}
+
+.gender-girls {
+  background-color: var(--girls-light);
+}
+
+.gender-boys .page-header h1 {
+  color: var(--boys-dark);
+}
+
+.gender-girls .page-header h1 {
+  color: var(--girls-dark);
 }
