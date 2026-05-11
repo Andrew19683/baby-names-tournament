@@ -44,6 +44,16 @@
     -->
     <button id="choose-btn" class="choose-btn" disabled>Выбрать</button>
 
+    <!--
+      JS добавляет .choice-wrapper--limit-reached на <main>,
+      когда дневной лимит исчерпан — карточки и кнопка прячутся,
+      это сообщение появляется.
+    -->
+    <div class="limit-message">
+      <p class="limit-message__title">Сегодня все имена уже выбраны.</p>
+      <p class="limit-message__subtitle">Увидимся завтра.</p>
+    </div>
+
   </main>
 
   <script src="../features/choice.js" type="module"></script>

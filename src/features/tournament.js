@@ -10,9 +10,13 @@ export function startTournament(names) {
     const j = Math.floor(Math.random() * (i + 1));
     [names[i], names[j]] = [names[j], names[i]];
   }
-  // Добавляем "пустых" участников до длины массива степени двойки
+  // Добавляем "пустых" участников в конец массива через одного, пока число участников не станет степенью двойки
   while (names.length < nextPowerOfTwo) {
-    names.push({ name: "Пусто", isBye: true });
+    const leftSlots = nextPowerOfTwo - names.length;
+    names.splice(nextPowerOfTwo - 2 * leftSlots + 1, 0, {
+      name: "Пусто",
+      isBye: true,
+    });
   }
 
   // Проставим каждому участнику его id
@@ -179,6 +183,11 @@ function generateLowerRound(matches, participants, matchId, round, gender) {
   }
 
   return matchId;
+}
+
+export function findMatchById(matches, gender, id) {
+  const genderName = gender === "m" ? "boys" : "girls";
+  return matches[genderName].find((match) => match.id == id);
 }
 
 // let names =
