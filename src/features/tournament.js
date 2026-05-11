@@ -190,6 +190,89 @@ export function findMatchById(matches, gender, id) {
   return matches[genderName].find((match) => match.id == id);
 }
 
+export function resolveMatch(matches, matchId, gender, winnerId, loserId) {
+  const genderName = gender === "m" ? "boys" : "girls";
+  const match = matches[genderName].find((match) => match.id === matchId);
+
+  // стоит добавить обработку ошибок, в частности проверка статуса, но это потом
+  match.status = "finished";
+  match.winner = winnerId == match.player1.id ? match.player1 : match.player2;
+  match.loser = loserId == match.player1.id ? match.player1 : match.player2;
+
+  // если это был гранд финал, то получаем победителя и завершаем функцию
+  if (match.id === 1000) {
+    console.log(
+      `Победа в турнире имён за ${winnerId == match.player1.id ? match.player1.name : match.player2.name}! Поздравляем!!!`,
+    );
+    localStorage.setItem("matches", JSON.stringify(matches));
+    return;
+  }
+
+  // переместим победителя в нужный матч
+  const winnerGoesMatch = findMatchById(
+    matches,
+    match.gender,
+    match.winnerGoesId,
+  );
+  if (!winnerGoesMatch.player1) {
+    winnerGoesMatch.player1 =
+      winnerId == match.player1.id ? match.player1 : match.player2;
+  } else {
+    winnerGoesMatch.player2 =
+      winnerId == match.player1.id ? match.player1 : match.player2;
+    winnerGoesMatch.status = "readyToPlay";
+  }
+  // и проигравшего, если он в верхней сетке
+  if (match.grid === "upper") {
+    const loserGoesMatch = findMatchById(
+      matches,
+      match.gender,
+      match.loserGoesId,
+    );
+    if (!loserGoesMatch.player1) {
+      loserGoesMatch.player1 =
+        loserId == match.player1.id ? match.player1 : match.player2;
+    } else {
+      loserGoesMatch.player2 =
+        loserId == match.player1.id ? match.player1 : match.player2;
+      loserGoesMatch.status = "readyToPlay";
+    }
+  }
+
+  localStorage.setItem("matches", JSON.stringify(matches));
+
+  return matches;
+}
+
+export function playByeMatches(matches) {
+  console.log(matches);
+  const allMatches = [...matches.boys, ...matches.girls];
+  allMatches.forEach((match) => {
+    if (
+      match.status === "readyToPlay" &&
+      (match.player1.isBye === true || match.player2.isBye === true)
+    ) {
+      if (match.player1.isBye === true) {
+        resolveMatch(
+          matches,
+          match.id,
+          match.gender,
+          match.player2.id,
+          match.player1.id,
+        );
+      } else {
+        resolveMatch(
+          matches,
+          match.id,
+          match.gender,
+          match.player1.id,
+          match.player2.id,
+        );
+      }
+    }
+  });
+}
+
 // let names =
 //   JSON.parse(`[{"name":"Алексей","gender":"m","round":0,"grid":"upper"},{"name":"Борис","gender":"m","round":0,"grid":"upper"},{"name":"Владимир","gender":"m","round":0,"grid":"upper"},{"name":"Григорий","gender":"m","round":0,"grid":"upper"},{"name":"Дмитрий","gender":"m","round":0,"grid":"upper"},{"name":"Евгений","gender":"m","round":0,"grid":"upper"},{"name":"Жан","gender":"m","round":0,"grid":"upper"},{"name":"Зак","gender":"m","round":0,"grid":"upper"},{"name":"Илья","gender":"m","round":0,"grid":"upper"},{"name":"Кирилл","gender":"m","round":0,"grid":"upper"},{"name":"Леонид","gender":"m","round":0,"grid":"upper"}]
 // `); // пока let, потом будем работать с localStorage и туда всё регулярно сохранять

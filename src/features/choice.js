@@ -1,4 +1,4 @@
-import { findMatchById } from "./tournament.js";
+import { findMatchById, resolveMatch, playByeMatches } from "./tournament.js";
 
 const divName1Node = document.getElementById("name-card-1");
 const name1Node = divName1Node.querySelector(".name-card__text");
@@ -79,66 +79,18 @@ function setMatchResult() {
     matches.boys.find((match) => match.status === "currentMatch") ||
     matches.girls.find((match) => match.status === "currentMatch");
 
-  // завершим матч и явно пропишем победителя и проигравшего
-  currentMatch.status = "finished";
-  currentMatch.winner =
-    winnerId == currentMatch.player1.id
-      ? currentMatch.player1
-      : currentMatch.player2;
-  currentMatch.loser =
-    loserId == currentMatch.player1.id
-      ? currentMatch.player1
-      : currentMatch.player2;
-  console.log(currentMatch);
-
-  // если это был гранд финал, то получаем победителя и завершаем функцию
-  if (currentMatch.id === 1000) {
-    console.log(
-      `Победа в турнире имён за ${winnerId == currentMatch.player1.id ? currentMatch.player1.name : currentMatch.player2.name}! Поздравляем!!!`,
-    );
-    localStorage.setItem("matches", JSON.stringify(matches));
-    return;
-  }
-
-  // переместим победителя в нужный матч
-  const winnerGoesMatch = findMatchById(
+  const result = resolveMatch(
     matches,
+    currentMatch.id,
     currentMatch.gender,
-    currentMatch.winnerGoesId,
+    winnerId,
+    loserId,
   );
-  if (!winnerGoesMatch.player1) {
-    winnerGoesMatch.player1 =
-      winnerId == currentMatch.player1.id
-        ? currentMatch.player1
-        : currentMatch.player2;
-  } else {
-    winnerGoesMatch.player2 =
-      winnerId == currentMatch.player1.id
-        ? currentMatch.player1
-        : currentMatch.player2;
-    winnerGoesMatch.status = "readyToPlay";
+
+  // после резолва всегда ищем и играем доступные матчи, где игрок bye, если это был не гранд финал
+  if (result) {
+    playByeMatches(result);
   }
-  // и проигравшего
-  if (currentMatch.loserGoesId) {
-    const loserGoesMatch = findMatchById(
-      matches,
-      currentMatch.gender,
-      currentMatch.loserGoesId,
-    );
-    if (!loserGoesMatch.player1) {
-      loserGoesMatch.player1 =
-        loserId == currentMatch.player1.id
-          ? currentMatch.player1
-          : currentMatch.player2;
-    } else {
-      loserGoesMatch.player2 =
-        loserId == currentMatch.player1.id
-          ? currentMatch.player1
-          : currentMatch.player2;
-      loserGoesMatch.status = "readyToPlay";
-    }
-  }
-  localStorage.setItem("matches", JSON.stringify(matches));
 }
 
 renderMatch(getRandomMatch());

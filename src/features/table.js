@@ -1,4 +1,8 @@
-import { generateMatches, startTournament } from "./tournament.js";
+import {
+  generateMatches,
+  startTournament,
+  playByeMatches,
+} from "./tournament.js";
 
 const names = JSON.parse(localStorage.getItem("names")) || [];
 
@@ -125,6 +129,7 @@ btnStartTournament.addEventListener("click", function () {
   const matches = {};
   matches.boys = generateMatches(boys, "m");
   matches.girls = generateMatches(girls, "f");
+  playByeMatches(matches); //  сразу сыграем матчи, где есть bye
   localStorage.setItem("matches", JSON.stringify(matches));
   window.location.href = "choice.html";
 });
