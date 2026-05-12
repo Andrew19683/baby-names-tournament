@@ -8,6 +8,13 @@ const btnChooseNode = document.getElementById("choose-btn");
 divName1Node.addEventListener("click", leftChoiceClick);
 divName2Node.addEventListener("click", rightChoiceClick);
 btnChooseNode.addEventListener("click", setMatchResult);
+const victoryPopup = document.querySelector(".popup");
+victoryPopup.addEventListener("click", (e) => {
+  if (e.target === victoryPopup) {
+    victoryPopup.style.display = "none";
+    location.reload();
+  }
+});
 
 let winnerId;
 let loserId;
@@ -73,7 +80,12 @@ function rightChoiceClick() {
 }
 
 function setMatchResult() {
-  // сперва найдем текущий матч
+  // сперва сделаем стиль для победителя
+  document
+    .querySelector(".choice-wrapper")
+    .classList.add("choice-wrapper--decided");
+
+  // найдем текущий матч
   const matches = JSON.parse(localStorage.getItem("matches"));
   const currentMatch =
     matches.boys.find((match) => match.status === "currentMatch") ||
@@ -90,6 +102,22 @@ function setMatchResult() {
   // после резолва всегда ищем и играем доступные матчи, где игрок bye, если это был не гранд финал
   if (result) {
     playByeMatches(result);
+  }
+
+  // через секунду рефрешнем страницу, если это не гранд финал
+  if (currentMatch.id !== 1000) {
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+  } else {
+    const popup = document.getElementById("grand-final-popup");
+    popup.querySelector(".popup__gender-label").textContent =
+      `Победитель среди ${currentMatch.gender === "m" ? "мальчиков" : "девочек"}`;
+    popup.querySelector(".popup__name").textContent =
+      currentMatch.player1.id === winnerId
+        ? currentMatch.player1.name
+        : currentMatch.player2.name;
+    popup.classList.add("popup--visible");
   }
 }
 

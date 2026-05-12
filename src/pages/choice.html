@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+  <script>
+    if (!localStorage.getItem("matches")) {
+      window.location.href = "table.html"
+    }
+  </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Выбор имени</title>
@@ -55,6 +61,16 @@
     </div>
 
   </main>
+
+  <div id="grand-final-popup" class="popup">
+    <div class="popup__card">
+      <p class="popup__ornament">✦ &nbsp; ✦ &nbsp; ✦</p>
+      <p class="popup__eyebrow">Турнир завершён</p>
+      <p class="popup__gender-label">Победитель среди мальчиков</p>
+      <div class="popup__divider"></div>
+      <p class="popup__name">Имя</p>
+    </div>
+  </div>
 
   <script src="../features/choice.js" type="module"></script>
 
