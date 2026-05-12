@@ -273,6 +273,63 @@ export function playByeMatches(matches) {
   });
 }
 
+// рендер
+const boysRoundsNumbersUpperNode = document.querySelector(
+  "#boys-winners-bracket .bracket-headers",
+);
+
+function renderRoundsNumbers(matches, querySelector, gender, grid) {
+  const rounds = matches[gender]
+    .filter((match) => match.grid === grid)
+    .reduce((maxRound, match) => {
+      return match.round > maxRound ? match.round : maxRound;
+    }, 1);
+  const node = document.querySelector(querySelector);
+  node.innerHTML = "";
+  for (let i = 1; i <= rounds - 1; i++) {
+    const header = document.createElement("div");
+    header.classList.add("bracket-headers__col");
+    header.textContent = `Раунд ${i}`;
+    node.appendChild(header);
+  }
+  const header = document.createElement("div");
+  header.classList.add("bracket-headers__col");
+  header.textContent = "Финал сетки";
+  node.appendChild(header);
+}
+
+function renderPage() {
+  const matches = JSON.parse(localStorage.getItem("matches"));
+  if (!matches) {
+    return;
+  }
+  renderRoundsNumbers(
+    matches,
+    "#boys-winners-bracket .bracket-headers",
+    "boys",
+    "upper",
+  );
+  renderRoundsNumbers(
+    matches,
+    "#boys-losers-bracket .bracket-headers",
+    "boys",
+    "lower",
+  );
+  renderRoundsNumbers(
+    matches,
+    "#girls-winners-bracket .bracket-headers",
+    "girls",
+    "upper",
+  );
+  renderRoundsNumbers(
+    matches,
+    "#girls-losers-bracket .bracket-headers",
+    "girls",
+    "lower",
+  );
+}
+
+renderPage();
 // let names =
 //   JSON.parse(`[{"name":"Алексей","gender":"m","round":0,"grid":"upper"},{"name":"Борис","gender":"m","round":0,"grid":"upper"},{"name":"Владимир","gender":"m","round":0,"grid":"upper"},{"name":"Григорий","gender":"m","round":0,"grid":"upper"},{"name":"Дмитрий","gender":"m","round":0,"grid":"upper"},{"name":"Евгений","gender":"m","round":0,"grid":"upper"},{"name":"Жан","gender":"m","round":0,"grid":"upper"},{"name":"Зак","gender":"m","round":0,"grid":"upper"},{"name":"Илья","gender":"m","round":0,"grid":"upper"},{"name":"Кирилл","gender":"m","round":0,"grid":"upper"},{"name":"Леонид","gender":"m","round":0,"grid":"upper"}]
 // `); // пока let, потом будем работать с localStorage и туда всё регулярно сохранять
