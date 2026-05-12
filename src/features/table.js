@@ -7,7 +7,17 @@ import {
 const names = JSON.parse(localStorage.getItem("names")) || [];
 
 const inputBoyNode = document.getElementById("boys-input");
+inputBoyNode.addEventListener("keydown", function (event) {
+  if (event.key === "Enter") {
+    btnAddBoy.click();
+  }
+});
 const inputGirlNode = document.getElementById("girls-input");
+inputGirlNode.addEventListener("keydown", function (event) {
+  if (event.key === "Enter") {
+    btnAddGirl.click();
+  }
+});
 const btnAddBoy = document.getElementById("boys-add-btn");
 const btnAddGirl = document.getElementById("girls-add-btn");
 const ulBoysNode = document.getElementById("boys-list");
@@ -93,7 +103,20 @@ function printGirls() {
 }
 
 btnAddBoy.addEventListener("click", function () {
-  const inputValue = inputBoyNode.value;
+  const inputValue = inputBoyNode.value
+    .trim()
+    .toLowerCase()
+    .split(/[\s]/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ")
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join("-");
+
+  if (names.some((n) => n.name === inputValue)) {
+    alert("Такое имя уже есть!");
+    return;
+  }
 
   if (!inputValue) {
     return;
@@ -104,10 +127,25 @@ btnAddBoy.addEventListener("click", function () {
   names.push(name);
   saveNames(names);
   printBoys();
+
+  inputBoyNode.value = "";
 });
 
 btnAddGirl.addEventListener("click", function () {
-  const inputValue = inputGirlNode.value;
+  const inputValue = inputGirlNode.value
+    .trim()
+    .toLowerCase()
+    .split(/[\s]/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ")
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join("-");
+
+  if (names.some((n) => n.name === inputValue)) {
+    alert("Такое имя уже есть!");
+    return;
+  }
 
   if (!inputValue) {
     return;
@@ -118,6 +156,8 @@ btnAddGirl.addEventListener("click", function () {
   names.push(name);
   saveNames(names);
   printGirls();
+
+  inputGirlNode.value = "";
 });
 
 btnStartTournament.addEventListener("click", function () {
