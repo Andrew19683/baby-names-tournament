@@ -1,5 +1,7 @@
 import { findMatchById, resolveMatch, playByeMatches } from "./tournament.js";
 
+const DAILY_LIMIT = 2; // можно конфигурировать, в будущем можно попробовать сделать её вычисляемой
+
 const divName1Node = document.getElementById("name-card-1");
 const name1Node = divName1Node.querySelector(".name-card__text");
 const divName2Node = document.getElementById("name-card-2");
@@ -19,7 +21,31 @@ victoryPopup.addEventListener("click", (e) => {
 let winnerId;
 let loserId;
 
+function isSameDay(d1, d2) {
+  return (
+    d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate()
+  );
+}
+
 function getRandomMatch() {
+  // проверим на дневной счётчик
+  const currentDate = new Date();
+  if (
+    isSameDay(currentDate, new Date(localStorage.getItem("lastPlayedDate")))
+  ) {
+    if (localStorage.getItem("todayCount") >= DAILY_LIMIT) {
+      document
+        .querySelector(".choice-wrapper")
+        .classList.add("choice-wrapper--limit-reached");
+      return;
+    }
+  } else {
+    localStorage.setItem("todayCount", "0");
+    localStorage.setItem("lastPlayedDate", currentDate.toDateString());
+  }
+
   const matches = JSON.parse(localStorage.getItem("matches"));
   const allMatches = [...matches.boys, ...matches.girls];
   const currentMatch = allMatches.find(
@@ -41,6 +67,10 @@ function getRandomMatch() {
 }
 
 function renderMatch(match) {
+  if (!match) {
+    return;
+  }
+
   document.body.classList.add(
     match.gender === "m" ? "gender-boys" : "gender-girls",
   );
@@ -119,6 +149,13 @@ function setMatchResult() {
         : currentMatch.player2.name;
     popup.classList.add("popup--visible");
   }
+
+  // добавим данные в счётчики
+  localStorage.setItem("lastPlayedDate", new Date().toDateString());
+  localStorage.setItem(
+    "todayCount",
+    (parseInt(localStorage.getItem("todayCount") || "0") + 1).toString(),
+  );
 }
 
 renderMatch(getRandomMatch());
