@@ -274,9 +274,6 @@ export function playByeMatches(matches) {
 }
 
 // рендер
-const boysRoundsNumbersUpperNode = document.querySelector(
-  "#boys-winners-bracket .bracket-headers",
-);
 
 function renderRoundsNumbers(matches, querySelector, gender, grid) {
   const rounds = matches[gender]
@@ -296,6 +293,104 @@ function renderRoundsNumbers(matches, querySelector, gender, grid) {
   header.classList.add("bracket-headers__col");
   header.textContent = "Финал сетки";
   node.appendChild(header);
+}
+
+function renderMatch(match) {
+  if (match.id === 1000) {
+    renderGrandFinal(match);
+    return;
+  }
+
+  // найти турнир и сетку
+  let matchNodeQuery = "#";
+  matchNodeQuery += match.gender === "m" ? "boys" : "girls";
+  matchNodeQuery += "-";
+  matchNodeQuery += match.grid === "upper" ? "winners" : "losers";
+  matchNodeQuery += "-bracket .bracket";
+
+  const matchNode = document.querySelector(matchNodeQuery);
+
+  const bracketRound =
+    matchNode.querySelector(`[data-round="${match.round}"]`) ||
+    document.createElement("div");
+  bracketRound.classList.add("bracket__round");
+  bracketRound.dataset.round = match.round;
+
+  const bracketMatch = document.createElement("div");
+  bracketMatch.classList.add("bracket__match");
+
+  // соберём айдишник матча
+  let dataMatchId = match.gender === "m" ? "b" : "g"; // первая буква - пол
+  dataMatchId += match.grid === "upper" ? "wm" : "lm"; // вторая буква - сетка
+  dataMatchId += match.id;
+  bracketMatch.dataset.match_id = dataMatchId;
+
+  const bracketSlot1 = document.createElement("div");
+  bracketSlot1.classList.add("bracket__slot");
+  bracketSlot1.textContent = match.player1 ? match.player1.name : "TBD";
+  if (!match.player1) {
+    bracketSlot1.classList.add("bracket__slot--pending");
+  } else if (match.player1.isBye) {
+    bracketSlot1.classList.add("bracket__slot--bye");
+  } else if (match.winner && match.player1.id === match.winner.id) {
+    bracketSlot1.classList.add("bracket__slot--winner");
+  }
+  const bracketSlot2 = document.createElement("div");
+  bracketSlot2.classList.add("bracket__slot");
+  bracketSlot2.textContent = match.player2 ? match.player2.name : "TBD";
+  if (!match.player2) {
+    bracketSlot2.classList.add("bracket__slot--pending");
+  } else if (match.player2.isBye) {
+    bracketSlot2.classList.add("bracket__slot--bye");
+  } else if (match.winner && match.player2.id === match.winner.id) {
+    bracketSlot2.classList.add("bracket__slot--winner");
+  }
+
+  bracketMatch.appendChild(bracketSlot1);
+  bracketMatch.appendChild(bracketSlot2);
+  bracketRound.appendChild(bracketMatch);
+  matchNode.appendChild(bracketRound);
+}
+
+function renderGrandFinal(match) {
+  const grandFinalNode =
+    match.gender === "m"
+      ? document.querySelector("#boys-grand-final .bracket__match")
+      : document.querySelector("#girls-grand-final .bracket__match");
+  const player1Node = document.createElement("div");
+  player1Node.classList.add("bracket__slot");
+  player1Node.textContent = match.player1
+    ? match.player1.name
+    : "Победитель В.С.";
+  if (!match.player1) {
+    player1Node.classList.add("bracket__slot--pending");
+  } else if (match.player1.isBye) {
+    player1Node.classList.add("bracket__slot--bye");
+  } else if (match.winner && match.player1.id === match.winner.id) {
+    player1Node.classList.add("bracket__slot--winner");
+  }
+  const player2Node = document.createElement("div");
+  player2Node.classList.add("bracket__slot");
+  player2Node.textContent = match.player2
+    ? match.player2.name
+    : "Победитель Н.С.";
+  if (!match.player2) {
+    player2Node.classList.add("bracket__slot--pending");
+  } else if (match.player2.isBye) {
+    player2Node.classList.add("bracket__slot--bye");
+  } else if (match.winner && match.player2.id === match.winner.id) {
+    player2Node.classList.add("bracket__slot--winner");
+  }
+  grandFinalNode.appendChild(player1Node);
+  grandFinalNode.appendChild(player2Node);
+}
+
+function setBracketHeight(matches, querySelector, gender, grid) {
+  const rounds = matches.filter(
+    (match) => match.grid === grid && match.round === 1,
+  ).length;
+  const bracketNode = document.querySelector(querySelector);
+  bracketNode.style.setProperty("--bracket-height", `${86 * rounds}px`);
 }
 
 function renderPage() {
@@ -327,6 +422,33 @@ function renderPage() {
     "girls",
     "lower",
   );
+
+  setBracketHeight(
+    matches.boys,
+    "#boys-winners-bracket .bracket",
+    "m",
+    "upper",
+  );
+  setBracketHeight(
+    matches.girls,
+    "#girls-winners-bracket .bracket",
+    "f",
+    "upper",
+  );
+  setBracketHeight(matches.boys, "#boys-losers-bracket .bracket", "m", "lower");
+  setBracketHeight(
+    matches.girls,
+    "#girls-losers-bracket .bracket",
+    "f",
+    "lower",
+  );
+
+  matches.boys.forEach((match) => {
+    renderMatch(match);
+  });
+  matches.girls.forEach((match) => {
+    renderMatch(match);
+  });
 }
 
 renderPage();
