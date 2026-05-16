@@ -1,4 +1,5 @@
 import { findMatchById, resolveMatch, playByeMatches } from "./tournament.js";
+import { exportData } from "./backup.js";
 
 const DAILY_LIMIT = 2; // можно конфигурировать, в будущем можно попробовать сделать её вычисляемой
 
@@ -17,6 +18,8 @@ victoryPopup.addEventListener("click", (e) => {
     location.reload();
   }
 });
+const btnExport = document.getElementById("export-btn");
+btnExport.addEventListener("click", exportData);
 
 let winnerId;
 let loserId;

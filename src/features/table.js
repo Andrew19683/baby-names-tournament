@@ -3,6 +3,7 @@ import {
   startTournament,
   playByeMatches,
 } from "./tournament.js";
+import { exportData } from "./backup.js";
 
 const names = JSON.parse(localStorage.getItem("names")) || [];
 
@@ -25,6 +26,8 @@ const ulGirlsNode = document.getElementById("girls-list");
 const spanBoysCounterNode = document.getElementById("boys-count");
 const spanGirlsCounterNode = document.getElementById("girls-count");
 const btnStartTournament = document.getElementById("finish-btn");
+const btnExport = document.getElementById("export-btn");
+btnExport.addEventListener("click", exportData);
 
 class Name {
   constructor(name, gender, grid = "upper") {

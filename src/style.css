@@ -890,3 +890,48 @@ body {
   font-style: italic;
   margin-top: 1.25rem;
 }
+
+/* ─── Import / Export controls ─── */
+.io-controls {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.75rem;
+}
+
+.btn-io {
+  height: 34px;
+  padding: 0 0.875rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: border-color 0.15s, color 0.15s, background 0.15s, transform 0.1s;
+  white-space: nowrap;
+}
+
+.btn-io:hover {
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+  background: var(--neutral-bg);
+}
+
+.btn-io:active {
+  transform: scale(0.97);
+}
+
+/* <label> нужен чтобы кликом открывать file picker — стилизуем под кнопку */
+label.btn-io {
+  cursor: pointer;
+}
+
+.btn-import input[type="file"] {
+  display: none;
+}

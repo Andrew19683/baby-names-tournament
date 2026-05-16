@@ -1,12 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <script>
-    if (!localStorage.getItem("matches")) {
-      window.location.href = "table.html"
-    }
-  </script>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Выбор имени</title>
@@ -70,6 +64,15 @@
 
   </main>
 
+  <!--
+    Попап гранд-финала.
+    JS добавляет .popup--visible чтобы показать,
+    заполняет .popup__gender-label и .popup__name через textContent.
+    Пример:
+      popup.classList.add('popup--visible');
+      popup.querySelector('.popup__gender-label').textContent = 'среди мальчиков';
+      popup.querySelector('.popup__name').textContent = 'Алексей';
+  -->
   <div id="grand-final-popup" class="popup">
     <div class="popup__card">
       <p class="popup__ornament">✦ &nbsp; ✦ &nbsp; ✦</p>
@@ -77,10 +80,11 @@
       <p class="popup__gender-label">Победитель среди мальчиков</p>
       <div class="popup__divider"></div>
       <p class="popup__name">Имя</p>
+      <p class="popup__tagline">имя выбрано голосованием</p>
     </div>
   </div>
 
-  <script src="../features/choice.js" type="module"></script>
+  <script src="../features/choice.js"></script>
 
 </body>
 </html>

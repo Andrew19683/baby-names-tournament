@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Турнирная таблица</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+  <header class="page-header">
+    <h1>Турнирная таблица</h1>
+    <p>Double elimination</p>
+  </header>
+
+  <main class="tournament-wrapper">
+
+
+    <!-- ══════════ МАЛЬЧИКИ ══════════ -->
+    <!--
+      8 участников.
+      --bracket-height = кол-во матчей R1 × 86px.
+      Верхняя сетка R1: 4 матча → 4 × 86 = 344px.
+      Нижняя сетка LR1: 2 матча → 2 × 86 = 172px.
+    -->
+    <div id="boys-tournament" class="tournament-block">
+
+      <div class="tournament-block__header">
+        <span class="section__icon" style="background: var(--boys-accent);"></span>
+        <h2 class="tournament-block__title">Мальчики</h2>
+      </div>
+
+      <!-- ВЕРХНЯЯ СЕТКА -->
+      <div id="boys-winners-bracket" class="bracket-group" data-bracket="winners">
+
+        <p class="bracket-group__title">Верхняя сетка</p>
+
+        <div class="bracket-headers">
+          <div class="bracket-headers__col">Раунд 1</div>
+          <div class="bracket-headers__col">Раунд 2</div>
+          <div class="bracket-headers__col">Финал сетки</div>
+        </div>
+
+        <div class="bracket" style="--bracket-height: 344px">
+
+          <!-- R1: 4 матча -->
+          <div class="bracket__round" data-round="1">
+            <div class="bracket__match" data-match-id="bwm1">
+              <div class="bracket__slot bracket__slot--winner">Алексей</div>
+              <div class="bracket__slot">Борис</div>
+            </div>
+            <div class="bracket__match" data-match-id="bwm2">
+              <div class="bracket__slot bracket__slot--winner">Владимир</div>
+              <div class="bracket__slot">Григорий</div>
+            </div>
+            <div class="bracket__match" data-match-id="bwm3">
+              <div class="bracket__slot bracket__slot--winner">Дмитрий</div>
+              <div class="bracket__slot">Евгений</div>
+            </div>
+            <div class="bracket__match" data-match-id="bwm4">
+              <div class="bracket__slot bracket__slot--winner">Жан</div>
+              <div class="bracket__slot">Зак</div>
+            </div>
+          </div>
+
+          <!-- R2: 2 матча -->
+          <div class="bracket__round" data-round="2">
+            <div class="bracket__match" data-match-id="bwm5">
+              <div class="bracket__slot bracket__slot--winner">Алексей</div>
+              <div class="bracket__slot">Владимир</div>
+            </div>
+            <div class="bracket__match" data-match-id="bwm6">
+              <div class="bracket__slot bracket__slot--pending">Дмитрий</div>
+              <div class="bracket__slot bracket__slot--pending">Жан</div>
+            </div>
+          </div>
+
+          <!-- Финал сетки: 1 матч -->
+          <div class="bracket__round" data-round="3">
+            <div class="bracket__match" data-match-id="bwm7">
+              <div class="bracket__slot bracket__slot--pending">Алексей</div>
+              <div class="bracket__slot bracket__slot--pending">—</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- НИЖНЯЯ СЕТКА -->
+      <div id="boys-losers-bracket" class="bracket-group" data-bracket="losers">
+
+        <p class="bracket-group__title">Нижняя сетка</p>
+
+        <div class="bracket-headers">
+          <div class="bracket-headers__col">Раунд 1</div>
+          <div class="bracket-headers__col">Раунд 2</div>
+          <div class="bracket-headers__col">Полуфинал</div>
+          <div class="bracket-headers__col">Финал сетки</div>
+        </div>
+
+        <div class="bracket" style="--bracket-height: 172px">
+
+          <!-- LR1: 2 матча (проигравшие WR1) -->
+          <div class="bracket__round" data-round="1">
+            <div class="bracket__match" data-match-id="blm1">
+              <div class="bracket__slot bracket__slot--pending">Борис</div>
+              <div class="bracket__slot bracket__slot--pending">Григорий</div>
+            </div>
+            <div class="bracket__match" data-match-id="blm2">
+              <div class="bracket__slot bracket__slot--pending">Евгений</div>
+              <div class="bracket__slot bracket__slot--pending">Зак</div>
+            </div>
+          </div>
+
+          <!-- LR2: 2 матча (победители LR1 + проигравшие WR2) -->
+          <div class="bracket__round" data-round="2">
+            <div class="bracket__match" data-match-id="blm3">
+              <div class="bracket__slot bracket__slot--pending">—</div>
+              <div class="bracket__slot bracket__slot--pending">Владимир</div>
+            </div>
+            <div class="bracket__match" data-match-id="blm4">
+              <div class="bracket__slot bracket__slot--pending">—</div>
+              <div class="bracket__slot bracket__slot--pending">—</div>
+            </div>
+          </div>
+
+          <!-- LR3 (полуфинал): 1 матч -->
+          <div class="bracket__round" data-round="3">
+            <div class="bracket__match" data-match-id="blm5">
+              <div class="bracket__slot bracket__slot--pending">—</div>
+              <div class="bracket__slot bracket__slot--pending">—</div>
+            </div>
+          </div>
+
+          <!-- Финал сетки: 1 матч (победитель LR3 + проигравший финала В.С.) -->
+          <div class="bracket__round" data-round="4">
+            <div class="bracket__match" data-match-id="blm6">
+              <div class="bracket__slot bracket__slot--pending">—</div>
+              <div class="bracket__slot bracket__slot--pending">—</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ГРАНД-ФИНАЛ -->
+      <div id="boys-grand-final" class="grand-final">
+        <p class="grand-final__label">Гранд-финал</p>
+        <div class="bracket__match" data-match-id="bgf1">
+          <div class="bracket__slot bracket__slot--pending">Победитель В.С.</div>
+          <div class="bracket__slot bracket__slot--pending">Победитель Н.С.</div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ══════════ ДЕВОЧКИ ══════════ -->
+    <!--
+      6 участниц + 2 пустых слота (бай).
+      R1 всё равно 4 матча → --bracket-height: 344px для верхней сетки.
+      Нижняя сетка: из R1 выбывают только участницы из реальных матчей
+      (Елена + проигравшая Жанна/Зоя), поэтому LR1 = 1 матч → 1 × 86 = 86px.
+    -->
+    <div id="girls-tournament" class="tournament-block">
+
+      <div class="tournament-block__header">
+        <span class="section__icon" style="background: var(--girls-accent);"></span>
+        <h2 class="tournament-block__title">Девочки</h2>
+      </div>
+
+      <!-- ВЕРХНЯЯ СЕТКА -->
+      <div id="girls-winners-bracket" class="bracket-group" data-bracket="winners">
+
+        <p class="bracket-group__title">Верхняя сетка</p>
+
+        <div class="bracket-headers">
+          <div class="bracket-headers__col">Раунд 1</div>
+          <div class="bracket-headers__col">Раунд 2</div>
+          <div class="bracket-headers__col">Финал сетки</div>
+        </div>
+
+        <div class="bracket" style="--bracket-height: 344px">
+
+          <!-- R1: 4 матча (6 участниц + 2 бая) -->
+          <div class="bracket__round" data-round="1">
+            <div class="bracket__match" data-match-id="gwm1">
+              <div class="bracket__slot bracket__slot--winner">Агния</div>
+              <div class="bracket__slot bracket__slot--bye">— пусто —</div>
+            </div>
+            <div class="bracket__match" data-match-id="gwm2">
+              <div class="bracket__slot bracket__slot--winner">Василиса</div>
+              <div class="bracket__slot bracket__slot--bye">— пусто —</div>
+            </div>
+            <div class="bracket__match" data-match-id="gwm3">
+              <div class="bracket__slot bracket__slot--winner">Диана</div>
+              <div class="bracket__slot">Елена</div>
+            </div>
+            <div class="bracket__match" data-match-id="gwm4">
+              <div class="bracket__slot bracket__slot--pending">Жанна</div>
+              <div class="bracket__slot bracket__slot--pending">Зоя</div>
+            </div>
+          </div>
+
+          <!-- R2: 2 матча -->
+          <div class="bracket__round" data-round="2">
+            <div class="bracket__match" data-match-id="gwm5">
+              <div class="bracket__slot bracket__slot--pending">Агния</div>
+              <div class="bracket__slot bracket__slot--pending">Василиса</div>
+            </div>
+            <div class="bracket__match" data-match-id="gwm6">
+              <div class="bracket__slot bracket__slot--pending">Диана</div>
+              <div class="bracket__slot bracket__slot--pending">—</div>
+            </div>
+          </div>
+
+          <!-- Финал сетки: 1 матч -->
+          <div class="bracket__round" data-round="3">
+            <div class="bracket__match" data-match-id="gwm7">
+              <div class="bracket__slot bracket__slot--pending">—</div>
+              <div class="bracket__slot bracket__slot--pending">—</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- НИЖНЯЯ СЕТКА -->
+      <div id="girls-losers-bracket" class="bracket-group" data-bracket="losers">
+
+        <p class="bracket-group__title">Нижняя сетка</p>
+
+        <div class="bracket-headers">
+          <div class="bracket-headers__col">Раунд 1</div>
+          <div class="bracket-headers__col">Раунд 2</div>
+          <div class="bracket-headers__col">Финал сетки</div>
+        </div>
+
+        <!--
+          Баи не дают проигравших в нижнюю сетку,
+          поэтому LR1 содержит только 1 матч.
+          1 × 86 = 86px.
+        -->
+        <div class="bracket" style="--bracket-height: 86px">
+
+          <!-- LR1: 1 матч (Елена + проигравшая gwm4) -->
+          <div class="bracket__round" data-round="1">
+            <div class="bracket__match" data-match-id="glm1">
+              <div class="bracket__slot bracket__slot--pending">Елена</div>
+              <div class="bracket__slot bracket__slot--pending">—</div>
+            </div>
+          </div>
+
+          <!-- LR2: 1 матч (победитель LR1 + проигравшая WR2) -->
+          <div class="bracket__round" data-round="2">
+            <div class="bracket__match" data-match-id="glm2">
+              <div class="bracket__slot bracket__slot--pending">—</div>
+              <div class="bracket__slot bracket__slot--pending">—</div>
+            </div>
+          </div>
+
+          <!-- Финал сетки: 1 матч (победитель LR2 + проигравшая финала В.С.) -->
+          <div class="bracket__round" data-round="3">
+            <div class="bracket__match" data-match-id="glm3">
+              <div class="bracket__slot bracket__slot--pending">—</div>
+              <div class="bracket__slot bracket__slot--pending">—</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ГРАНД-ФИНАЛ -->
+      <div id="girls-grand-final" class="grand-final">
+        <p class="grand-final__label">Гранд-финал</p>
+        <div class="bracket__match" data-match-id="ggf1">
+          <div class="bracket__slot bracket__slot--pending">Победитель В.С.</div>
+          <div class="bracket__slot bracket__slot--pending">Победитель Н.С.</div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="../features/tournament.js"></script>
+
+</body>
+</html>

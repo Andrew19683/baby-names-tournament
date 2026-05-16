@@ -4,10 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Добавление имён</title>
-  <link rel="stylesheet" href="../style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body>
   
@@ -27,10 +26,10 @@
       
       <div class="section__input-row">
         <input
-        id="boys-input"
-        class="section__input"
-        type="text"
-        placeholder="Введите имя…"
+          id="boys-input"
+          class="section__input"
+          type="text"
+          placeholder="Введите имя…"
         >
         <button id="boys-add-btn" class="section__add-btn">Добавить</button>
       </div>
@@ -38,7 +37,7 @@
       <div>
         <p class="section__list-label">Уже добавлены:</p>
         <ul id="boys-list" class="section__list">
-          <!-- Гененируется в table.js 
+          <!-- Генерируется в table.js 
           
           Пример:
           <li class="name-item">
@@ -55,7 +54,7 @@
       
     </section>  
     
-    <!-- ───────── Девочки ───────── -->
+    <!-- Девочки -->
     <section id="girls-section" class="section">
       
       <div class="section__header">
@@ -65,10 +64,10 @@
       
       <div class="section__input-row">
         <input
-        id="girls-input"
-        class="section__input"
-        type="text"
-        placeholder="Введите имя…"
+          id="girls-input"
+          class="section__input"
+          type="text"
+          placeholder="Введите имя…"
         >
         <button id="girls-add-btn" class="section__add-btn">Добавить</button>
       </div>
@@ -99,6 +98,6 @@
     <button class="btn-io btn-export" id="export-btn">↓ Экспорт</button>
   </div>
   
-  <script type="module" src="../features/table.js"></script>
+  <script src="../features/table.js"></script>
 </body>
 </html>

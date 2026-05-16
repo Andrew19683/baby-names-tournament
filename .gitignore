@@ -91,9 +91,8 @@ lerna-debug.log
 Thumbs.db
 
 # my garbage
-src/templates*
 src/features/participants.js
-baby-names.html
 *.png
 matches.json
 names.json
+tournament-data.json
