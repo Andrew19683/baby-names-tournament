@@ -935,3 +935,172 @@ label.btn-io {
 .btn-import input[type="file"] {
   display: none;
 }
+
+/* ─── Name card: layout update for description ─── */
+/* Карточка теперь колонка, чтобы имя + описание стекались */
+.name-card {
+  flex-direction: column;
+  gap: 0.6rem;
+  position: relative; /* для позиционирования edit-btn */
+}
+
+/* Кнопка редактирования — по умолчанию почти невидима,
+   появляется при hover на карточку */
+.name-card__edit-btn {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.875rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  /* не должна участвовать в выборе карточки — stopPropagation в JS */
+  z-index: 1;
+}
+
+
+.name-card__edit-btn:hover {
+  background: var(--neutral-bg);
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+}
+
+/* Описание внутри карточки */
+.name-card__desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-align: center;
+  white-space: pre-wrap; /* сохраняем переносы строк */
+  line-height: 1.55;
+  max-width: 220px;
+  word-break: break-word;
+}
+
+/* Скрываем когда пусто — JS убирает .name-card--has-desc,
+   но на всякий случай дублируем через :empty */
+.name-card__desc:empty {
+  display: none;
+}
+
+/* В решённом состоянии иконку прячем */
+.choice-wrapper--decided .name-card__edit-btn {
+  display: none;
+}
+
+
+/* ─── Edit description popup ─── */
+.popup--edit .popup__card {
+  max-width: 420px;
+  padding: 2rem;
+}
+
+.popup--edit .popup__eyebrow {
+  text-align: left;
+  margin-bottom: 0;
+}
+
+.popup--edit .popup__divider {
+  margin: 0.875rem 0;
+}
+
+.edit-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 0.75rem 0.875rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  background: var(--neutral-bg);
+  resize: vertical;
+  outline: none;
+  line-height: 1.55;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.edit-textarea::placeholder {
+  color: var(--text-secondary);
+}
+
+.edit-textarea:focus {
+  border-color: var(--border-hover);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+}
+
+.gender-boys .edit-textarea:focus {
+  border-color: var(--boys-accent);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.gender-girls .edit-textarea:focus {
+  border-color: var(--girls-accent);
+  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.12);
+}
+
+/* Кнопки попапа */
+.edit-popup__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.875rem;
+}
+
+.edit-popup__cancel {
+  height: 38px;
+  padding: 0 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.edit-popup__cancel:hover {
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+}
+
+.edit-popup__save {
+  height: 38px;
+  padding: 0 1.25rem;
+  border-radius: var(--radius-sm);
+  border: none;
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.gender-boys .edit-popup__save {
+  background: var(--boys-accent);
+}
+
+.gender-boys .edit-popup__save:hover {
+  background: var(--boys-dark);
+}
+
+.gender-girls .edit-popup__save {
+  background: var(--girls-accent);
+}
+
+.gender-girls .edit-popup__save:hover {
+  background: var(--girls-dark);
+}
