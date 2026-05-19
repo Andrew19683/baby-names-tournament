@@ -32,13 +32,17 @@
     <div class="name-cards">
 
       <div id="name-card-1" class="name-card">
+        <button class="name-card__edit-btn" id="edit-btn-1" aria-label="Добавить описание">✎</button>
         <span class="name-card__text">Имя 1</span>
+        <p class="name-card__desc" id="desc-1"></p>
       </div>
 
       <span class="name-cards__divider">или</span>
 
       <div id="name-card-2" class="name-card">
+        <button class="name-card__edit-btn" id="edit-btn-2" aria-label="Добавить описание">✎</button>
         <span class="name-card__text">Имя 2</span>
+        <p class="name-card__desc" id="desc-2"></p>
       </div>
 
     </div>
@@ -69,6 +73,23 @@
     </div>
 
   </main>
+
+  <div id="edit-popup" class="popup popup--edit">
+    <div class="popup__card">
+      <p class="popup__eyebrow">Описание имени</p>
+      <div class="popup__divider"></div>
+      <textarea
+        id="edit-textarea"
+        class="edit-textarea"
+        placeholder="Например: в честь дедушки…"
+        rows="5"
+      ></textarea>
+      <div class="edit-popup__actions">
+        <button class="edit-popup__cancel" id="edit-cancel">Отмена</button>
+        <button class="edit-popup__save" id="edit-save">Сохранить</button>
+      </div>
+    </div>
+  </div>
 
   <div id="grand-final-popup" class="popup">
     <div class="popup__card">

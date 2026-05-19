@@ -25,14 +25,21 @@
 
     <div class="name-cards">
 
-      <div id="name-card-1" class="name-card">
-        <span class="name-card__text">Имя 1</span>
+      <div id="name-card-1" class="name-card name-card--has-desc">
+        <!-- JS: stopPropagation на этой кнопке, чтобы не выбирать карточку -->
+        <button class="name-card__edit-btn" id="edit-btn-1" aria-label="Добавить описание">✎</button>
+        <span class="name-card__text">Александр</span>
+        <!-- JS: заполняет textContent, добавляет .name-card--has-desc на карточку -->
+        <p class="name-card__desc" id="desc-1">В честь дедушки.
+Красивое и сильное имя.</p>
       </div>
 
       <span class="name-cards__divider">или</span>
 
       <div id="name-card-2" class="name-card">
-        <span class="name-card__text">Имя 2</span>
+        <button class="name-card__edit-btn" id="edit-btn-2" aria-label="Добавить описание">✎</button>
+        <span class="name-card__text">Михаил</span>
+        <p class="name-card__desc" id="desc-2"></p>
       </div>
 
     </div>
@@ -65,6 +72,31 @@
   </main>
 
   <!--
+    Попап редактирования описания.
+    JS открывает: edit-popup.classList.add('popup--visible')
+    JS знает какую карточку редактирует через data-target (или просто переменную).
+    При сохранении:
+      card.querySelector('.name-card__desc').textContent = textarea.value;
+      card.classList.toggle('name-card--has-desc', textarea.value.trim() !== '');
+  -->
+  <div id="edit-popup" class="popup popup--edit">
+    <div class="popup__card">
+      <p class="popup__eyebrow">Описание имени</p>
+      <div class="popup__divider"></div>
+      <textarea
+        id="edit-textarea"
+        class="edit-textarea"
+        placeholder="Например: в честь дедушки…"
+        rows="5"
+      ></textarea>
+      <div class="edit-popup__actions">
+        <button class="edit-popup__cancel" id="edit-cancel">Отмена</button>
+        <button class="edit-popup__save" id="edit-save">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <!--
     Попап гранд-финала.
     JS добавляет .popup--visible чтобы показать,
     заполняет .popup__gender-label и .popup__name через textContent.
@@ -83,8 +115,6 @@
       <p class="popup__tagline">имя выбрано голосованием</p>
     </div>
   </div>
-
-  <script src="../features/choice.js"></script>
 
 </body>
 </html>

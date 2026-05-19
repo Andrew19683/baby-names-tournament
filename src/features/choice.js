@@ -3,6 +3,7 @@ import { exportData, importData } from "./backup.js";
 
 const DAILY_LIMIT = 2; // можно конфигурировать, в будущем можно попробовать сделать её вычисляемой
 
+// карточки имён
 const divName1Node = document.getElementById("name-card-1");
 const name1Node = divName1Node.querySelector(".name-card__text");
 const divName2Node = document.getElementById("name-card-2");
@@ -11,13 +12,19 @@ const btnChooseNode = document.getElementById("choose-btn");
 divName1Node.addEventListener("click", leftChoiceClick);
 divName2Node.addEventListener("click", rightChoiceClick);
 btnChooseNode.addEventListener("click", setMatchResult);
-const victoryPopup = document.querySelector(".popup");
+const name1DescriptionNode = document.getElementById("desc-1");
+const name2DescriptionNode = document.getElementById("desc-2");
+
+// попап победы
+const victoryPopup = document.getElementById("grand-final-popup");
 victoryPopup.addEventListener("click", (e) => {
   if (e.target === victoryPopup) {
     victoryPopup.style.display = "none";
     location.reload();
   }
 });
+
+// экспорт-импорт
 const btnExport = document.getElementById("export-btn");
 btnExport.addEventListener("click", exportData);
 const inputImport = document.getElementById("import-input");
@@ -25,8 +32,36 @@ inputImport.addEventListener("change", (event) => {
   importData(event.target.files[0]);
 });
 
-let winnerId;
-let loserId;
+// добавление описания имени
+const btnEdit1Node = document.getElementById("edit-btn-1");
+btnEdit1Node.addEventListener("click", (event) => {
+  currentEditingName = name1Node.textContent;
+  openEditPopup(event);
+});
+const btnEdit2Node = document.getElementById("edit-btn-2");
+btnEdit2Node.addEventListener("click", (event) => {
+  currentEditingName = name2Node.textContent;
+  openEditPopup(event);
+});
+const editPopup = document.getElementById("edit-popup");
+editPopup.addEventListener("click", (e) => {
+  if (e.target === editPopup) {
+    closeEditPopup();
+  }
+});
+const btnCancelEdit = document.getElementById("edit-cancel");
+btnCancelEdit.addEventListener("click", closeEditPopup);
+const textareaEdit = document.getElementById("edit-textarea");
+const btnSaveEdit = document.getElementById("edit-save");
+btnSaveEdit.addEventListener("click", () => {
+  saveDescription(currentEditingName, textareaEdit.value);
+  closeEditPopup();
+  renderDescriptions();
+});
+
+let winnerId; // для определения победившего имени
+let loserId; // для определения проигравшего имени
+let currentEditingName; // для определения какому имени редактируем описание
 
 function isSameDay(d1, d2) {
   return (
@@ -59,7 +94,6 @@ function getRandomMatch() {
     (match) => match.status === "currentMatch",
   );
   if (currentMatch) {
-    console.log(currentMatch);
     return currentMatch;
   }
   const possibleMatches = allMatches.filter(
@@ -68,7 +102,6 @@ function getRandomMatch() {
   const randomMatch =
     possibleMatches[Math.floor(Math.random() * possibleMatches.length)];
   randomMatch.status = "currentMatch";
-  console.log(randomMatch);
   localStorage.setItem("matches", JSON.stringify(matches));
   return randomMatch;
 }
@@ -94,6 +127,7 @@ function renderMatch(match) {
     name2Node.textContent = match.player1.name;
     divName2Node.dataset.playerId = match.player1.id;
   }
+  renderDescriptions();
   document.querySelector(".limit-message__title").classList.add("hidden");
   document.querySelector(".limit-message__subtitle").classList.add("hidden");
 }
@@ -165,4 +199,32 @@ function setMatchResult() {
   );
 }
 
-renderMatch(getRandomMatch());
+function getDescription(name) {
+  const descriptions = JSON.parse(localStorage.getItem("descriptions")) || {};
+  return descriptions[name] || "";
+}
+
+function saveDescription(name, description) {
+  const descriptions = JSON.parse(localStorage.getItem("descriptions")) || {};
+  descriptions[name] = description;
+  localStorage.setItem("descriptions", JSON.stringify(descriptions));
+}
+
+function openEditPopup(event) {
+  event.stopPropagation();
+  textareaEdit.value = getDescription(currentEditingName);
+  editPopup.classList.add("popup--visible");
+}
+
+function closeEditPopup() {
+  editPopup.classList.remove("popup--visible");
+}
+
+function renderDescriptions() {
+  name1DescriptionNode.textContent = getDescription(name1Node.textContent);
+  name2DescriptionNode.textContent = getDescription(name2Node.textContent);
+}
+
+if (window.location.pathname.includes("choice.html")) {
+  renderMatch(getRandomMatch());
+}

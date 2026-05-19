@@ -3,6 +3,8 @@ export function exportData() {
   const matches = JSON.parse(localStorage.getItem("matches")) || undefined;
   const lastPlayedDate = localStorage.getItem("lastPlayedDate") || undefined;
   const todayCount = localStorage.getItem("todayCount") || undefined;
+  const descriptions =
+    JSON.parse(localStorage.getItem("descriptions")) || undefined;
 
   const result = { names: names };
   if (matches) {
@@ -13,6 +15,9 @@ export function exportData() {
   }
   if (todayCount) {
     result.todayCount = todayCount;
+  }
+  if (descriptions) {
+    result.descriptions = descriptions;
   }
   const dataStr =
     "data:text/json;charset=utf-8," +
@@ -43,6 +48,9 @@ export function importData(file) {
       }
       if (data.todayCount) {
         localStorage.setItem("todayCount", data.todayCount);
+      }
+      if (data.descriptions) {
+        localStorage.setItem("descriptions", JSON.stringify(data.descriptions));
       }
       alert("Данные успешно импортированы!");
       location.reload();
