@@ -76,6 +76,7 @@ export function generateMatches(names, gender) {
     player1: null,
     player2: null,
     gender: gender,
+    status: "pending",
   });
 
   // validate(names.length, matches);
