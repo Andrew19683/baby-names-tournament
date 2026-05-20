@@ -20,7 +20,12 @@ const victoryPopup = document.getElementById("grand-final-popup");
 victoryPopup.addEventListener("click", (e) => {
   if (e.target === victoryPopup) {
     victoryPopup.style.display = "none";
-    location.reload();
+    const matches = JSON.parse(localStorage.getItem("matches"));
+    if (checkForUnfinishedMatches()) {
+      location.reload();
+    } else {
+      window.location.href = "tournament.html";
+    }
   }
 });
 
@@ -105,6 +110,9 @@ function getRandomMatch() {
   const possibleMatches = allMatches.filter(
     (match) => match.status === "readyToPlay",
   );
+  if (possibleMatches.length === 0) {
+    return;
+  }
   const randomMatch =
     possibleMatches[Math.floor(Math.random() * possibleMatches.length)];
   randomMatch.status = "currentMatch";
@@ -113,6 +121,11 @@ function getRandomMatch() {
 }
 
 function renderMatch(match) {
+  if (!checkForUnfinishedMatches()) {
+    window.location.href = "tournament.html";
+    return;
+  }
+
   if (!match) {
     return;
   }
@@ -233,4 +246,17 @@ function renderDescriptions() {
 
 if (window.location.pathname.includes("choice.html")) {
   renderMatch(getRandomMatch());
+}
+
+function checkForUnfinishedMatches() {
+  const matches = JSON.parse(localStorage.getItem("matches"));
+  if (
+    [...matches.boys, ...matches.girls].some(
+      (match) => match.status !== "finished",
+    )
+  ) {
+    return true;
+  } else {
+    return false;
+  }
 }
