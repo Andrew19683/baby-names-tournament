@@ -59,6 +59,12 @@ btnSaveEdit.addEventListener("click", () => {
   renderDescriptions();
 });
 
+// редирект на tournament при лимите
+const linkToTournament = document.getElementById("tournament-link");
+linkToTournament.addEventListener("click", () => {
+  location.href = "tournament.html";
+});
+
 let winnerId; // для определения победившего имени
 let loserId; // для определения проигравшего имени
 let currentEditingName; // для определения какому имени редактируем описание

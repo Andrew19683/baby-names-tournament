@@ -1104,3 +1104,49 @@ label.btn-io {
 .gender-girls .edit-popup__save:hover {
   background: var(--girls-dark);
 }
+
+/* ─── Limit message: tournament link block ─── */
+.limit-message__divider {
+  width: 36px;
+  height: 1px;
+  background: var(--border);
+  margin: 1.5rem auto;
+}
+
+.limit-message__link-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.6rem;
+}
+
+.limit-message__link {
+  display: inline-block;
+  height: 40px;
+  padding: 0 1.5rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  line-height: 40px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.limit-message__link:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.limit-message__warning {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+}
