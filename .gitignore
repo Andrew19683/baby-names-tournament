@@ -97,3 +97,4 @@ src/features/participants.js
 matches.json
 names.json
 tournament-data.json
+.vscode/
