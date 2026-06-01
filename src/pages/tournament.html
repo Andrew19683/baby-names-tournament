@@ -1,119 +1,196 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Турнирная таблица</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="../style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Турнирная таблица</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <h1>Турнирная таблица</h1>
+      <p>Double elimination</p>
+    </header>
 
-  <header class="page-header">
-    <h1>Турнирная таблица</h1>
-    <p>Double elimination</p>
-  </header>
+    <div class="tournament-layout">
+      <main class="tournament-wrapper">
+        <!-- ══════════ МАЛЬЧИКИ ══════════ -->
+        <div id="boys-tournament" class="tournament-block">
+          <div class="tournament-block__header">
+            <span
+              class="section__icon"
+              style="background: var(--boys-accent)"
+            ></span>
+            <h2 class="tournament-block__title">Мальчики</h2>
+          </div>
 
-  <main class="tournament-wrapper">
+          <!-- ВЕРХНЯЯ СЕТКА -->
+          <div
+            id="boys-winners-bracket"
+            class="bracket-group"
+            data-bracket="winners"
+          >
+            <p class="bracket-group__title">Верхняя сетка</p>
 
+            <div class="bracket-headers">
+              <!-- renderRoundsNumbers() -->
+            </div>
 
-    <!-- ══════════ МАЛЬЧИКИ ══════════ -->
-    <div id="boys-tournament" class="tournament-block">
+            <div class="bracket">
+              <!-- renderMatch -->
+            </div>
+          </div>
 
-      <div class="tournament-block__header">
-        <span class="section__icon" style="background: var(--boys-accent);"></span>
-        <h2 class="tournament-block__title">Мальчики</h2>
+          <!-- НИЖНЯЯ СЕТКА -->
+          <div
+            id="boys-losers-bracket"
+            class="bracket-group"
+            data-bracket="losers"
+          >
+            <p class="bracket-group__title">Нижняя сетка</p>
+
+            <div class="bracket-headers">
+              <!-- renderRoundsNumbers -->
+            </div>
+
+            <div class="bracket">
+              <!-- renderMatch -->
+            </div>
+          </div>
+
+          <!-- ГРАНД-ФИНАЛ -->
+          <div id="boys-grand-final" class="grand-final">
+            <p class="grand-final__label">Гранд-финал</p>
+            <div class="bracket__match" data-match-id="bgf1">
+              <!-- renderGrandFinal -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════ ДЕВОЧКИ ══════════ -->
+        <div id="girls-tournament" class="tournament-block">
+          <div class="tournament-block__header">
+            <span
+              class="section__icon"
+              style="background: var(--girls-accent)"
+            ></span>
+            <h2 class="tournament-block__title">Девочки</h2>
+          </div>
+
+          <!-- ВЕРХНЯЯ СЕТКА -->
+          <div
+            id="girls-winners-bracket"
+            class="bracket-group"
+            data-bracket="winners"
+          >
+            <p class="bracket-group__title">Верхняя сетка</p>
+
+            <div class="bracket-headers">
+              <!-- renderRoundsNumbers -->
+            </div>
+
+            <div class="bracket">
+              <!-- renderMatch -->
+            </div>
+          </div>
+
+          <!-- НИЖНЯЯ СЕТКА -->
+          <div
+            id="girls-losers-bracket"
+            class="bracket-group"
+            data-bracket="losers"
+          >
+            <p class="bracket-group__title">Нижняя сетка</p>
+
+            <div class="bracket-headers">
+              <!-- renderRoundsNumbers -->
+            </div>
+
+            <div class="bracket">
+              <!-- renderMatch -->
+            </div>
+          </div>
+
+          <!-- ГРАНД-ФИНАЛ -->
+          <div id="girls-grand-final" class="grand-final">
+            <p class="grand-final__label">Гранд-финал</p>
+            <div class="bracket__match" data-match-id="ggf1">
+              <!-- renderGrandFinal -->
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- ══════════ ПАНЕЛЬ МЕСТ ══════════ -->
+      <!--
+      Каждая группа независима.
+      JS открыть/закрыть: document.getElementById('boys-standings-group').classList.toggle('standings-group--open')
+      Турнир завершён (всегда открыто, без кнопки): classList.add('standings-group--always-open')
+    -->
+      <div class="standings-sidebar">
+        <!-- Мальчики -->
+        <div class="standings-group" id="boys-standings-group">
+          <button class="standings-toggle" id="boys-standings-toggle">
+            <span
+              class="section__icon"
+              style="background: var(--boys-accent)"
+            ></span>
+            <span class="standings-toggle__icon">›</span>
+            Места · М
+          </button>
+          <aside class="standings-panel">
+            <div class="standings-card">
+              <h3 class="standings__gender-title">
+                <span
+                  class="section__icon"
+                  style="background: var(--boys-accent)"
+                ></span>
+                Мальчики
+              </h3>
+              <div class="standings__table" id="boys-standings">
+                <!-- Далее через renderStrandings -->
+              </div>
+            </div>
+          </aside>
+        </div>
+        <!-- Девочки -->
+        <div class="standings-group" id="girls-standings-group">
+          <button class="standings-toggle" id="girls-standings-toggle">
+            <span
+              class="section__icon"
+              style="background: var(--girls-accent)"
+            ></span>
+            <span class="standings-toggle__icon">›</span>
+            Места · Д
+          </button>
+          <aside class="standings-panel">
+            <div class="standings-card">
+              <h3 class="standings__gender-title">
+                <span
+                  class="section__icon"
+                  style="background: var(--girls-accent)"
+                ></span>
+                Девочки
+              </h3>
+              <div class="standings__table" id="girls-standings">
+                <!-- Далее через renderStrandings -->
+              </div>
+            </div>
+          </aside>
+        </div>
       </div>
-
-      <!-- ВЕРХНЯЯ СЕТКА -->
-      <div id="boys-winners-bracket" class="bracket-group" data-bracket="winners">
-
-        <p class="bracket-group__title">Верхняя сетка</p>
-
-        <div class="bracket-headers">
-          <!-- renderRoundsNumbers() -->
-        </div>
-
-        <div class="bracket">
-          <!-- renderMatch -->
-        </div>
-      </div>
-
-      <!-- НИЖНЯЯ СЕТКА -->
-      <div id="boys-losers-bracket" class="bracket-group" data-bracket="losers">
-
-        <p class="bracket-group__title">Нижняя сетка</p>
-
-        <div class="bracket-headers">
-          <!-- renderRoundsNumbers -->
-        </div>
-
-        <div class="bracket">
-          <!-- renderMatch -->
-        </div>
-      </div>
-
-      <!-- ГРАНД-ФИНАЛ -->
-      <div id="boys-grand-final" class="grand-final">
-        <p class="grand-final__label">Гранд-финал</p>
-        <div class="bracket__match" data-match-id="bgf1">
-          <!-- renderGrandFinal -->
-        </div>
-      </div>
-
     </div>
+    <!-- /tournament-layout -->
 
-
-    <!-- ══════════ ДЕВОЧКИ ══════════ -->
-    <div id="girls-tournament" class="tournament-block">
-
-      <div class="tournament-block__header">
-        <span class="section__icon" style="background: var(--girls-accent);"></span>
-        <h2 class="tournament-block__title">Девочки</h2>
-      </div>
-
-      <!-- ВЕРХНЯЯ СЕТКА -->
-      <div id="girls-winners-bracket" class="bracket-group" data-bracket="winners">
-
-        <p class="bracket-group__title">Верхняя сетка</p>
-
-        <div class="bracket-headers">
-          <!-- renderRoundsNumbers -->
-        </div>
-
-        <div class="bracket">
-          <!-- renderMatch -->
-        </div>
-      </div>
-
-      <!-- НИЖНЯЯ СЕТКА -->
-      <div id="girls-losers-bracket" class="bracket-group" data-bracket="losers">
-
-        <p class="bracket-group__title">Нижняя сетка</p>
-
-        <div class="bracket-headers">
-          <!-- renderRoundsNumbers -->
-        </div>
-
-        <div class="bracket">
-          <!-- renderMatch -->
-        </div>
-      </div>
-
-      <!-- ГРАНД-ФИНАЛ -->
-      <div id="girls-grand-final" class="grand-final">
-        <p class="grand-final__label">Гранд-финал</p>
-        <div class="bracket__match" data-match-id="ggf1">
-          <!-- renderGrandFinal -->
-        </div>
-      </div>
-
+    <div class="io-controls">
+      <label class="btn-io btn-import" id="import-label">
+        ↑ Импорт
+        <input type="file" id="import-input" accept=".json" />
+      </label>
+      <button class="btn-io btn-export" id="export-btn">↓ Экспорт</button>
     </div>
-
-  </main>
-
-  <script type="module" src="../features/tournament.js"></script>
-
-</body>
+    <script type="module" src="../features/tournament.js"></script>
+  </body>
 </html>

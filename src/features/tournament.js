@@ -1,4 +1,35 @@
 import validate from "./validate.js";
+import { exportData, importData } from "./backup.js";
+
+const placeClasses = {
+  1: "standings__place--gold",
+  2: "standings__place--silver",
+  3: "standings__place--bronze",
+};
+
+// Импорт/экспорт
+const btnExport = document.getElementById("export-btn");
+btnExport.addEventListener("click", exportData);
+const inputImport = document.getElementById("import-input");
+inputImport.addEventListener("change", (event) => {
+  importData(event.target.files[0]);
+});
+
+// Блок с местами
+const boysPlacesNode = document.getElementById("boys-standings-group");
+const girlsPlacesNode = document.getElementById("girls-standings-group");
+boysPlacesNode.addEventListener("click", function () {
+  boysPlacesNode.classList.toggle("standings-group--open");
+});
+girlsPlacesNode.addEventListener("click", function () {
+  girlsPlacesNode.classList.toggle("standings-group--open");
+});
+if (isGrandFinalFinished("boys")) {
+  boysPlacesNode.classList.add("standings-group--always-open");
+}
+if (isGrandFinalFinished("girls")) {
+  girlsPlacesNode.classList.add("standings-group--always-open");
+}
 
 export function startTournament(names) {
   // Вычисляем следующую степень двойки, которая больше или равна длине массива
@@ -23,7 +54,6 @@ export function startTournament(names) {
   names.forEach((name, index) => {
     name.id = index;
   });
-  //console.log(names);
   return names;
 }
 
@@ -92,7 +122,6 @@ function generateUpperRound(
   names,
   gender,
 ) {
-  // console.log(nextLoserMatchId);
   let finalMatch = false;
   let nextWinnerMatchId;
   if (participants === 2) {
@@ -145,7 +174,6 @@ function generateUpperRound(
     matches.push(match);
   }
 
-  // console.log(nextLoserMatchId);
   return { matchId, nextLoserMatchId };
 }
 
@@ -202,9 +230,6 @@ export function resolveMatch(matches, matchId, gender, winnerId, loserId) {
 
   // если это был гранд финал, то получаем победителя и завершаем функцию
   if (match.id === 1000) {
-    console.log(
-      `Победа в турнире имён за ${winnerId == match.player1.id ? match.player1.name : match.player2.name}! Поздравляем!!!`,
-    );
     localStorage.setItem("matches", JSON.stringify(matches));
     return;
   }
@@ -246,7 +271,6 @@ export function resolveMatch(matches, matchId, gender, winnerId, loserId) {
 }
 
 export function playByeMatches(matches) {
-  console.log(matches);
   const allMatches = [...matches.boys, ...matches.girls];
   allMatches.forEach((match) => {
     if (
@@ -272,6 +296,88 @@ export function playByeMatches(matches) {
       }
     }
   });
+}
+
+function getStrandings(matches, gender) {
+  // Сперва фильтруем только по нижней сетке
+  const lowerMatches = matches[gender].filter(
+    (match) => match.grid === "lower",
+  );
+  // определим максимальный номер раунда нижней сетки
+  const maxRound = lowerMatches.reduce((maxRound, match) => {
+    return match.round > maxRound ? match.round : maxRound;
+  }, 1);
+  // и посчитаем, сколько всего было участников
+  const namesCount = JSON.parse(localStorage.getItem("names")).filter(
+    (name) => name.gender === (gender === "boys" ? "m" : "f"),
+  ).length;
+
+  // сгруппируем: номер раунда -> массив проигравших
+  const matchesByRound = new Map();
+  lowerMatches.forEach((match) => {
+    if (match.status === "finished" && !match.loser.isBye) {
+      if (matchesByRound.has(match.round)) {
+        matchesByRound.get(match.round).push(match.loser);
+      } else {
+        matchesByRound.set(match.round, [match.loser]);
+      }
+    }
+  });
+
+  // теперь соберем это в вид: место -> имя
+  const standings = {};
+  // Начнем с гранд финала - там определяются 1 и 2 место
+  if (
+    matches[gender].find((match) => match.id === 1000).status === "finished"
+  ) {
+    standings[1] = [
+      matches[gender].find((match) => match.id === 1000).winner.name,
+    ];
+    standings[2] = [
+      matches[gender].find((match) => match.id === 1000).loser.name,
+    ];
+  } else {
+    standings[1] = ["—"];
+    standings[2] = ["—"];
+  }
+
+  // Остальные места определим по проигравшим в нижней сетке
+  let startPlace = 3;
+  // Проходим по раундам начиная с конца
+  for (let i = maxRound; i >= 1; i--) {
+    const step = Math.floor((maxRound - i) / 2) + 1; // количество игроков в раунде нижней сетки умножается на 1 потом на 2 потом на 1 и так далее
+    const endPlace =
+      startPlace + step - 1 > namesCount ? namesCount : startPlace + step - 1; // посчитаем, до какого места рпоигравшие его делят
+    const key =
+      endPlace > startPlace ? `${startPlace}-${endPlace}` : `${startPlace}`; // отформатируем ключ для отрисовки
+    // теперь создадим ключ, если еще его нет, и заполним именами
+    if (matchesByRound.has(i)) {
+      matchesByRound.get(i).forEach((loser) => {
+        standings[key] = matchesByRound.get(i).map((match) => match.name);
+      });
+    }
+    // если ключ так и не создали - заполним его TBD массивом
+    if (!matchesByRound.has(i)) {
+      standings[key] = new Array(step).fill("—");
+    }
+    // также проверим, что если ключ создан - он нужной длины, и если нет - дополним
+    while (standings[key].length < endPlace - startPlace + 1) {
+      standings[key].push("—");
+    }
+    // стоит завершить цикл, если мы уже добрались до количества участников
+    if (endPlace === namesCount) {
+      break;
+    }
+    startPlace += step;
+  }
+  return standings;
+}
+
+function isGrandFinalFinished(gender) {
+  const matches = JSON.parse(localStorage.getItem("matches"));
+  return (
+    matches[gender].find((match) => match.id === 1000).status === "finished"
+  );
 }
 
 // рендер
@@ -452,12 +558,75 @@ function renderPage() {
   });
 }
 
+function renderStrandings(matches) {
+  const boysStandings = getStrandings(matches, "boys");
+  const girlsStandings = getStrandings(matches, "girls");
+
+  const names = JSON.parse(localStorage.getItem("names"));
+
+  const boysStandingsNode = document.querySelector("#boys-standings");
+  const girlsStandingsNode = document.querySelector("#girls-standings");
+
+  // отрисуем мальчиков
+  for (const [key, value] of Object.entries(boysStandings)) {
+    const divEntry = document.createElement("div");
+    divEntry.classList.add("standings__entry");
+    boysStandingsNode.appendChild(divEntry);
+    const spanPlace = document.createElement("span");
+    spanPlace.classList.add("standings__place");
+    spanPlace.textContent = key;
+    if (placeClasses[key]) {
+      spanPlace.classList.add(placeClasses[key]);
+    }
+    divEntry.appendChild(spanPlace);
+    const divNames = document.createElement("div");
+    divNames.classList.add("standings__names");
+    divEntry.appendChild(divNames);
+    value.forEach((name) => {
+      const spanName = document.createElement("span");
+      spanName.classList.add("standings__name");
+      spanName.textContent = name;
+      if (name === "—") {
+        spanName.classList.add("standings__name--pending");
+      }
+      divNames.appendChild(spanName);
+    });
+  }
+
+  // отрисуем девочек
+  for (const [key, value] of Object.entries(girlsStandings)) {
+    const divEntry = document.createElement("div");
+    divEntry.classList.add("standings__entry");
+    girlsStandingsNode.appendChild(divEntry);
+    const spanPlace = document.createElement("span");
+    spanPlace.classList.add("standings__place");
+    spanPlace.textContent = key;
+    if (placeClasses[key]) {
+      spanPlace.classList.add(placeClasses[key]);
+    }
+    divEntry.appendChild(spanPlace);
+    const divNames = document.createElement("div");
+    divNames.classList.add("standings__names");
+    divEntry.appendChild(divNames);
+    value.forEach((name) => {
+      const spanName = document.createElement("span");
+      spanName.classList.add("standings__name");
+      spanName.textContent = name;
+      if (name === "—") {
+        spanName.classList.add("standings__name--pending");
+      }
+      divNames.appendChild(spanName);
+    });
+  }
+}
+
+// непосредствено вызов функции рендера
 if (document.querySelector("#boys-tournament")) {
   renderPage();
+  renderStrandings(JSON.parse(localStorage.getItem("matches")));
 }
-// let names =
-//   JSON.parse(`[{"name":"Алексей","gender":"m","round":0,"grid":"upper"},{"name":"Борис","gender":"m","round":0,"grid":"upper"},{"name":"Владимир","gender":"m","round":0,"grid":"upper"},{"name":"Григорий","gender":"m","round":0,"grid":"upper"},{"name":"Дмитрий","gender":"m","round":0,"grid":"upper"},{"name":"Евгений","gender":"m","round":0,"grid":"upper"},{"name":"Жан","gender":"m","round":0,"grid":"upper"},{"name":"Зак","gender":"m","round":0,"grid":"upper"},{"name":"Илья","gender":"m","round":0,"grid":"upper"},{"name":"Кирилл","gender":"m","round":0,"grid":"upper"},{"name":"Леонид","gender":"m","round":0,"grid":"upper"}]
-// `); // пока let, потом будем работать с localStorage и туда всё регулярно сохранять
-// names = names.slice(0, 7); // для теста
-// startTournament();
-// generateMatches();
+
+console.log(
+  getStrandings(JSON.parse(localStorage.getItem("matches")), "girls"),
+);
+console.log(getStrandings(JSON.parse(localStorage.getItem("matches")), "boys"));

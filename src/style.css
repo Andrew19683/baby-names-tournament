@@ -1150,3 +1150,218 @@ label.btn-io {
   margin-right: auto;
   line-height: 1.5;
 }
+
+
+/* ═══════════════════════════════════════════
+   TOURNAMENT LAYOUT (with standings sidebar)
+   ═══════════════════════════════════════════ */
+
+.tournament-layout {
+  display: flex;
+  gap: 1.5rem;
+  max-width: 1420px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+/* Переопределяем tournament-wrapper внутри лейаута —
+   убираем собственный max-width и margin, flex-item сам растягивается */
+.tournament-layout .tournament-wrapper {
+  flex: 1;
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+}
+
+/* ─── Standings sidebar ─── */
+.standings-sidebar {
+  flex-shrink: 0;
+  position: sticky;
+  top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.standings-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 34px;
+  padding: 0 0.875rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.standings-toggle:hover {
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+}
+
+.standings-toggle__icon {
+  display: inline-block;
+  font-size: 0.85rem;
+  transition: transform 0.25s ease;
+}
+
+/* Стрелка переворачивается когда панель открыта */
+.standings-sidebar--open .standings-toggle__icon {
+  transform: scaleX(-1);
+}
+
+/* ─── Standings panel ─── */
+.standings-panel {
+  display: none;
+  width: 224px;
+}
+
+.standings-sidebar--open .standings-panel {
+  display: block;
+}
+
+/* JS добавляет этот класс когда турнир завершён —
+   панель видна сразу, кнопка скрыта */
+.standings-sidebar--always-open .standings-panel {
+  display: block;
+}
+
+.standings-sidebar--always-open .standings-toggle {
+  display: none;
+}
+
+.standings-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  padding: 1.25rem;
+  max-height: calc(100vh - 6rem);
+  overflow-y: auto;
+}
+
+/* ─── Gender block ─── */
+.standings__gender-block + .standings__gender-block {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.standings__gender-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+/* ─── Table rows ─── */
+.standings__table {
+  display: flex;
+  flex-direction: column;
+}
+
+.standings__entry {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.standings__entry:last-child {
+  border-bottom: none;
+}
+
+/* ─── Place badge ─── */
+.standings__place {
+  font-size: 0.68rem;
+  font-weight: 700;
+  min-width: 34px;
+  text-align: center;
+  padding: 2px 5px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  background: var(--neutral-bg);
+  color: var(--text-secondary);
+}
+
+.standings__place--gold   { background: #fef9c3; color: #854d0e; }
+.standings__place--silver { background: #f1f5f9; color: #475569; }
+.standings__place--bronze { background: #ffedd5; color: #9a3412; }
+
+/* ─── Names ─── */
+.standings__names {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.standings__name {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.standings__name--pending {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+
+/* ─── Standings: две независимые группы (мальчики / девочки) ─── */
+/* Переопределяет предыдущие правила standings-sidebar--open */
+
+.standings-sidebar {
+  gap: 0.75rem; /* чуть больше отступ между двумя группами */
+}
+
+/* Каждая группа = кнопка + своя панель */
+.standings-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.standings-group .standings-panel {
+  display: none;
+}
+
+.standings-group--open .standings-panel {
+  display: block;
+}
+
+.standings-group--always-open .standings-panel {
+  display: block;
+}
+
+.standings-group--always-open .standings-toggle {
+  display: none;
+}
+
+.standings-group--open .standings-toggle__icon {
+  transform: scaleX(-1);
+}
+
+/* Цветная точка в кнопке — как на остальных страницах */
+.standings-toggle .section__icon {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+}
