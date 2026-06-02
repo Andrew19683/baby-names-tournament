@@ -15,22 +15,6 @@ inputImport.addEventListener("change", (event) => {
   importData(event.target.files[0]);
 });
 
-// Блок с местами
-const boysPlacesNode = document.getElementById("boys-standings-group");
-const girlsPlacesNode = document.getElementById("girls-standings-group");
-boysPlacesNode.addEventListener("click", function () {
-  boysPlacesNode.classList.toggle("standings-group--open");
-});
-girlsPlacesNode.addEventListener("click", function () {
-  girlsPlacesNode.classList.toggle("standings-group--open");
-});
-if (isGrandFinalFinished("boys")) {
-  boysPlacesNode.classList.add("standings-group--always-open");
-}
-if (isGrandFinalFinished("girls")) {
-  girlsPlacesNode.classList.add("standings-group--always-open");
-}
-
 export function startTournament(names) {
   // Вычисляем следующую степень двойки, которая больше или равна длине массива
   // За счёт этого определим вид турнира
@@ -559,6 +543,21 @@ function renderPage() {
 }
 
 function renderStrandings(matches) {
+  const boysPlacesNode = document.getElementById("boys-standings-group");
+  const girlsPlacesNode = document.getElementById("girls-standings-group");
+  boysPlacesNode.addEventListener("click", function () {
+    boysPlacesNode.classList.toggle("standings-group--open");
+  });
+  girlsPlacesNode.addEventListener("click", function () {
+    girlsPlacesNode.classList.toggle("standings-group--open");
+  });
+  if (isGrandFinalFinished("boys")) {
+    boysPlacesNode.classList.add("standings-group--always-open");
+  }
+  if (isGrandFinalFinished("girls")) {
+    girlsPlacesNode.classList.add("standings-group--always-open");
+  }
+
   const boysStandings = getStrandings(matches, "boys");
   const girlsStandings = getStrandings(matches, "girls");
 
@@ -625,8 +624,3 @@ if (document.querySelector("#boys-tournament")) {
   renderPage();
   renderStrandings(JSON.parse(localStorage.getItem("matches")));
 }
-
-console.log(
-  getStrandings(JSON.parse(localStorage.getItem("matches")), "girls"),
-);
-console.log(getStrandings(JSON.parse(localStorage.getItem("matches")), "boys"));
