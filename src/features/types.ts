@@ -1,6 +1,7 @@
 export type Descriptions = Record<string, string>;
-type Gender = "boy" | "girl";
-type Grid = "upper" | "lower" | "grandFinal";
+export type Gender = "boy" | "girl";
+export type GenderPlural = "boys" | "girls";
+export type Grid = "upper" | "lower" | "grandFinal";
 type MatchStatus = "pending" | "currentMatch" | "readyToPlay" | "finished";
 
 export interface ImportResult {
@@ -13,8 +14,9 @@ export interface ImportResult {
 
 export interface Match {
   id: number;
-  grid: Grid;
-  gender: Gender;
+  grid?: Grid;
+  round: number;
+  gender: GenderPlural;
   player1: Name | null;
   player2: Name | null;
   status: MatchStatus;
@@ -26,8 +28,8 @@ export interface Match {
 }
 
 export interface Matches {
-  boys: Match[];
-  girls: Match[];
+  boys?: Match[];
+  girls?: Match[];
 }
 
 export interface Name {

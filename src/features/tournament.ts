@@ -1,5 +1,13 @@
-import validate from "./validate.js";
+// import validate from "./validate.js"; // для проверок генерации
 import { exportData, importData } from "./backup.js";
+import type {
+  Gender,
+  GenderPlural,
+  Grid,
+  Name,
+  Match,
+  Matches,
+} from "./types.js";
 
 const placeClasses = {
   1: "standings__place--gold",
@@ -8,14 +16,18 @@ const placeClasses = {
 };
 
 // Импорт/экспорт
-const btnExport = document.getElementById("export-btn");
+const btnExport = document.getElementById("export-btn") as HTMLButtonElement;
 btnExport.addEventListener("click", exportData);
-const inputImport = document.getElementById("import-input");
+const inputImport = document.getElementById("import-input") as HTMLInputElement;
 inputImport.addEventListener("change", (event) => {
-  importData(event.target.files[0]);
+  const target = event.target;
+
+  if (target instanceof HTMLInputElement && target.files?.[0]) {
+    importData(target.files[0]);
+  }
 });
 
-export function startTournament(names) {
+export function startTournament(names: Name[], gender: Gender) {
   // Вычисляем следующую степень двойки, которая больше или равна длине массива
   // За счёт этого определим вид турнира
   const nextPowerOfTwo = Math.pow(2, Math.ceil(Math.log2(names.length)));
@@ -23,7 +35,9 @@ export function startTournament(names) {
   // Перемешиваем массив имен с помощью алгоритма Фишера-Йетса
   for (let i = names.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [names[i], names[j]] = [names[j], names[i]];
+    const temp = names[i]!;
+    names[i] = names[j]!;
+    names[j] = temp;
   }
   // Добавляем "пустых" участников в конец массива через одного, пока число участников не станет степенью двойки
   while (names.length < nextPowerOfTwo) {
@@ -31,6 +45,8 @@ export function startTournament(names) {
     names.splice(nextPowerOfTwo - 2 * leftSlots + 1, 0, {
       name: "Пусто",
       isBye: true,
+      gender: gender,
+      id: names.length,
     });
   }
 
@@ -41,9 +57,9 @@ export function startTournament(names) {
   return names;
 }
 
-export function generateMatches(names, gender) {
+export function generateMatches(names: Name[], gender: GenderPlural) {
   // протестировал для 8 и 16 участников. Понятия не имею, как оно будет на других степенях двойки, но выглядит корректно
-  const matches = []; // сюда закидываем все созданные матчи
+  const matches: Match[] = []; // сюда закидываем все созданные матчи
   let matchId = 0; // глобальный счетчик матчей верхней сетки
   let round = 1; // текущий раунд
   let loserMatchId = 100; // счетчик для матчей нижней сетки, начинаем с 100, чтобы не пересекаться с верхней сеткой
@@ -98,13 +114,13 @@ export function generateMatches(names, gender) {
 }
 
 function generateUpperRound(
-  matches,
-  participants,
-  matchId,
-  round,
-  nextLoserMatchId,
-  names,
-  gender,
+  matches: Match[],
+  participants: number,
+  matchId: number,
+  round: number,
+  nextLoserMatchId: number,
+  names: Name[],
+  gender: GenderPlural,
 ) {
   let finalMatch = false;
   let nextWinnerMatchId;
@@ -124,10 +140,10 @@ function generateUpperRound(
       round: round,
       grid: "upper",
       gender: gender,
-    };
+    } as Match;
     if (round === 1) {
-      match.player1 = names[i];
-      match.player2 = names[participants - 1 - i];
+      match.player1 = names[i]!;
+      match.player2 = names[participants - 1 - i]!;
       match.status = "readyToPlay";
     } else {
       match.player1 = null;
@@ -135,8 +151,8 @@ function generateUpperRound(
       match.status = "pending";
     }
     if (!finalMatch) {
-      match.winnerGoesId = Math.trunc(nextWinnerMatchId);
-      nextWinnerMatchId += 0.5;
+      match.winnerGoesId = Math.trunc(nextWinnerMatchId!);
+      nextWinnerMatchId! += 0.5;
       if (round % 2 === 1) {
         match.loserGoesId = Math.trunc(nextLoserMatchId);
         if (round % 4 === 3) {
@@ -161,7 +177,13 @@ function generateUpperRound(
   return { matchId, nextLoserMatchId };
 }
 
-function generateLowerRound(matches, participants, matchId, round, gender) {
+function generateLowerRound(
+  matches: Match[],
+  participants: number,
+  matchId: number,
+  round: number,
+  gender: GenderPlural,
+) {
   let finalMatch = false;
   let nextWinnerMatchId;
   if (participants === 2 && round % 2 === 0) {
@@ -177,15 +199,15 @@ function generateLowerRound(matches, participants, matchId, round, gender) {
       grid: "lower",
       status: "pending",
       gender: gender,
-    };
+    } as Match;
     if (!finalMatch) {
       match.player1 = null;
       match.player2 = null;
-      match.winnerGoesId = Math.trunc(nextWinnerMatchId);
+      match.winnerGoesId = Math.trunc(nextWinnerMatchId!);
       if (round % 2 === 0) {
-        nextWinnerMatchId += 0.5;
+        nextWinnerMatchId! += 0.5;
       } else {
-        nextWinnerMatchId += 1;
+        nextWinnerMatchId! += 1;
       }
     } else {
       match.isGridFinal = true;
@@ -198,19 +220,30 @@ function generateLowerRound(matches, participants, matchId, round, gender) {
   return matchId;
 }
 
-export function findMatchById(matches, gender, id) {
-  const genderName = gender === "m" ? "boys" : "girls";
-  return matches[genderName].find((match) => match.id == id);
+export function findMatchById(
+  matches: Matches,
+  gender: GenderPlural,
+  id: number,
+): Match {
+  return matches[gender]!.find((match: Match) => match.id == id)!;
 }
 
-export function resolveMatch(matches, matchId, gender, winnerId, loserId) {
-  const genderName = gender === "m" ? "boys" : "girls";
-  const match = matches[genderName].find((match) => match.id === matchId);
+export function resolveMatch(
+  matches: Matches,
+  matchId: number,
+  gender: GenderPlural,
+  winnerId: number,
+  loserId: number,
+) {
+  const match = matches[gender]!.find(
+    (match: Match) => match.id === matchId,
+  )! as Match;
 
   // стоит добавить обработку ошибок, в частности проверка статуса, но это потом
   match.status = "finished";
-  match.winner = winnerId == match.player1.id ? match.player1 : match.player2;
-  match.loser = loserId == match.player1.id ? match.player1 : match.player2;
+  match.winner =
+    winnerId == match.player1!.id ? match.player1! : match.player2!;
+  match.loser = loserId == match.player1!.id ? match.player1! : match.player2!;
 
   // если это был гранд финал, то получаем победителя и завершаем функцию
   if (match.id === 1000) {
@@ -222,14 +255,14 @@ export function resolveMatch(matches, matchId, gender, winnerId, loserId) {
   const winnerGoesMatch = findMatchById(
     matches,
     match.gender,
-    match.winnerGoesId,
+    match.winnerGoesId!,
   );
   if (!winnerGoesMatch.player1) {
     winnerGoesMatch.player1 =
-      winnerId == match.player1.id ? match.player1 : match.player2;
+      winnerId == match.player1!.id ? match.player1 : match.player2;
   } else {
     winnerGoesMatch.player2 =
-      winnerId == match.player1.id ? match.player1 : match.player2;
+      winnerId == match.player1!.id ? match.player1 : match.player2;
     winnerGoesMatch.status = "readyToPlay";
   }
   // и проигравшего, если он в верхней сетке
@@ -237,14 +270,14 @@ export function resolveMatch(matches, matchId, gender, winnerId, loserId) {
     const loserGoesMatch = findMatchById(
       matches,
       match.gender,
-      match.loserGoesId,
+      match.loserGoesId!,
     );
     if (!loserGoesMatch.player1) {
       loserGoesMatch.player1 =
-        loserId == match.player1.id ? match.player1 : match.player2;
+        loserId == match.player1!.id ? match.player1 : match.player2;
     } else {
       loserGoesMatch.player2 =
-        loserId == match.player1.id ? match.player1 : match.player2;
+        loserId == match.player1!.id ? match.player1 : match.player2;
       loserGoesMatch.status = "readyToPlay";
     }
   }
@@ -254,54 +287,57 @@ export function resolveMatch(matches, matchId, gender, winnerId, loserId) {
   return matches;
 }
 
-export function playByeMatches(matches) {
-  const allMatches = [...matches.boys, ...matches.girls];
+export function playByeMatches(matches: Matches) {
+  const allMatches: Match[] = [
+    ...(matches.boys ?? []),
+    ...(matches.girls ?? []),
+  ];
   allMatches.forEach((match) => {
     if (
       match.status === "readyToPlay" &&
-      (match.player1.isBye === true || match.player2.isBye === true)
+      (match.player1!.isBye === true || match.player2!.isBye === true)
     ) {
-      if (match.player1.isBye === true) {
+      if (match.player1!.isBye === true) {
         resolveMatch(
           matches,
           match.id,
           match.gender,
-          match.player2.id,
-          match.player1.id,
+          match.player2!.id,
+          match.player1!.id,
         );
       } else {
         resolveMatch(
           matches,
           match.id,
           match.gender,
-          match.player1.id,
-          match.player2.id,
+          match.player1!.id,
+          match.player2!.id,
         );
       }
     }
   });
 }
 
-function getStrandings(matches, gender) {
+function getStrandings(matches: Matches, gender: GenderPlural) {
   // Сперва фильтруем только по нижней сетке
-  const lowerMatches = matches[gender].filter(
-    (match) => match.grid === "lower",
+  const lowerMatches: Match[] = matches[gender]!.filter(
+    (match: Match) => match.grid === "lower",
   );
   // определим максимальный номер раунда нижней сетки
   const maxRound = lowerMatches.reduce((maxRound, match) => {
     return match.round > maxRound ? match.round : maxRound;
   }, 1);
   // и посчитаем, сколько всего было участников
-  const namesCount = JSON.parse(localStorage.getItem("names")).filter(
-    (name) => name.gender === (gender === "boys" ? "m" : "f"),
+  const namesCount = JSON.parse(localStorage.getItem("names") ?? "null").filter(
+    (name: Name) => name.gender === gender + "s",
   ).length;
 
   // сгруппируем: номер раунда -> массив проигравших
-  const matchesByRound = new Map();
+  const matchesByRound = new Map<number, Name[]>();
   lowerMatches.forEach((match) => {
-    if (match.status === "finished" && !match.loser.isBye) {
+    if (match.status === "finished" && match.loser && !match.loser.isBye) {
       if (matchesByRound.has(match.round)) {
-        matchesByRound.get(match.round).push(match.loser);
+        matchesByRound.get(match.round)!.push(match.loser);
       } else {
         matchesByRound.set(match.round, [match.loser]);
       }
@@ -309,16 +345,16 @@ function getStrandings(matches, gender) {
   });
 
   // теперь соберем это в вид: место -> имя
-  const standings = {};
+  const standings: Record<number | string, string[]> = {};
   // Начнем с гранд финала - там определяются 1 и 2 место
   if (
-    matches[gender].find((match) => match.id === 1000).status === "finished"
+    matches[gender]!.find((match) => match.id === 1000)!.status === "finished"
   ) {
     standings[1] = [
-      matches[gender].find((match) => match.id === 1000).winner.name,
+      matches[gender]!.find((match) => match.id === 1000)!.winner!.name,
     ];
     standings[2] = [
-      matches[gender].find((match) => match.id === 1000).loser.name,
+      matches[gender]!.find((match) => match.id === 1000)!.loser!.name,
     ];
   } else {
     standings[1] = ["—"];
@@ -336,8 +372,8 @@ function getStrandings(matches, gender) {
       endPlace > startPlace ? `${startPlace}-${endPlace}` : `${startPlace}`; // отформатируем ключ для отрисовки
     // теперь создадим ключ, если еще его нет, и заполним именами
     if (matchesByRound.has(i)) {
-      matchesByRound.get(i).forEach((loser) => {
-        standings[key] = matchesByRound.get(i).map((match) => match.name);
+      matchesByRound.get(i)!.forEach(() => {
+        standings[key] = matchesByRound.get(i)!.map((match) => match.name);
       });
     }
     // если ключ так и не создали - заполним его TBD массивом
@@ -345,8 +381,8 @@ function getStrandings(matches, gender) {
       standings[key] = new Array(step).fill("—");
     }
     // также проверим, что если ключ создан - он нужной длины, и если нет - дополним
-    while (standings[key].length < endPlace - startPlace + 1) {
-      standings[key].push("—");
+    while (standings[key]!.length < endPlace - startPlace + 1) {
+      standings[key]!.push("—");
     }
     // стоит завершить цикл, если мы уже добрались до количества участников
     if (endPlace === namesCount) {
@@ -357,36 +393,43 @@ function getStrandings(matches, gender) {
   return standings;
 }
 
-function isGrandFinalFinished(gender) {
-  const matches = JSON.parse(localStorage.getItem("matches"));
+function isGrandFinalFinished(gender: GenderPlural) {
+  const matches = JSON.parse(localStorage.getItem("matches") ?? "null");
   return (
-    matches[gender].find((match) => match.id === 1000).status === "finished"
+    matches[gender].find((match: Match) => match.id === 1000).status ===
+    "finished"
   );
 }
 
 // рендер
 
-function renderRoundsNumbers(matches, querySelector, gender, grid) {
-  const rounds = matches[gender]
-    .filter((match) => match.grid === grid)
-    .reduce((maxRound, match) => {
+function renderRoundsNumbers(
+  matches: Matches,
+  querySelector: string,
+  gender: GenderPlural,
+  grid: Grid,
+) {
+  const rounds = matches[gender]!.filter((match) => match.grid === grid).reduce(
+    (maxRound, match) => {
       return match.round > maxRound ? match.round : maxRound;
-    }, 1);
+    },
+    1,
+  );
   const node = document.querySelector(querySelector);
-  node.innerHTML = "";
+  node!.innerHTML = "";
   for (let i = 1; i <= rounds - 1; i++) {
     const header = document.createElement("div");
     header.classList.add("bracket-headers__col");
     header.textContent = `Раунд ${i}`;
-    node.appendChild(header);
+    node!.appendChild(header);
   }
   const header = document.createElement("div");
   header.classList.add("bracket-headers__col");
   header.textContent = "Финал сетки";
-  node.appendChild(header);
+  node!.appendChild(header);
 }
 
-function renderMatch(match) {
+function renderMatch(match: Match) {
   if (match.id === 1000) {
     renderGrandFinal(match);
     return;
@@ -394,7 +437,7 @@ function renderMatch(match) {
 
   // найти турнир и сетку
   let matchNodeQuery = "#";
-  matchNodeQuery += match.gender === "m" ? "boys" : "girls";
+  matchNodeQuery += match.gender;
   matchNodeQuery += "-";
   matchNodeQuery += match.grid === "upper" ? "winners" : "losers";
   matchNodeQuery += "-bracket .bracket";
@@ -402,16 +445,17 @@ function renderMatch(match) {
   const matchNode = document.querySelector(matchNodeQuery);
 
   const bracketRound =
-    matchNode.querySelector(`[data-round="${match.round}"]`) ||
-    document.createElement("div");
+    (matchNode!.querySelector(
+      `[data-round="${match.round}"]`,
+    ) as HTMLElement) || document.createElement("div");
   bracketRound.classList.add("bracket__round");
-  bracketRound.dataset.round = match.round;
+  bracketRound.dataset.round = String(match.round);
 
   const bracketMatch = document.createElement("div");
   bracketMatch.classList.add("bracket__match");
 
   // соберём айдишник матча
-  let dataMatchId = match.gender === "m" ? "b" : "g"; // первая буква - пол
+  let dataMatchId = match.gender.slice(0, 1); // первая буква - пол
   dataMatchId += match.grid === "upper" ? "wm" : "lm"; // вторая буква - сетка
   dataMatchId += match.id;
   bracketMatch.dataset.match_id = dataMatchId;
@@ -440,12 +484,12 @@ function renderMatch(match) {
   bracketMatch.appendChild(bracketSlot1);
   bracketMatch.appendChild(bracketSlot2);
   bracketRound.appendChild(bracketMatch);
-  matchNode.appendChild(bracketRound);
+  matchNode!.appendChild(bracketRound);
 }
 
-function renderGrandFinal(match) {
+function renderGrandFinal(match: Match) {
   const grandFinalNode =
-    match.gender === "m"
+    match.gender === "boys"
       ? document.querySelector("#boys-grand-final .bracket__match")
       : document.querySelector("#girls-grand-final .bracket__match");
   const player1Node = document.createElement("div");
@@ -472,20 +516,23 @@ function renderGrandFinal(match) {
   } else if (match.winner && match.player2.id === match.winner.id) {
     player2Node.classList.add("bracket__slot--winner");
   }
-  grandFinalNode.appendChild(player1Node);
-  grandFinalNode.appendChild(player2Node);
+  grandFinalNode!.appendChild(player1Node);
+  grandFinalNode!.appendChild(player2Node);
 }
 
-function setBracketHeight(matches, querySelector, gender, grid) {
+function setBracketHeight(matches: Match[], querySelector: string, grid: Grid) {
   const rounds = matches.filter(
     (match) => match.grid === grid && match.round === 1,
   ).length;
-  const bracketNode = document.querySelector(querySelector);
+  const bracketNode = document.querySelector<HTMLElement>(querySelector);
+  if (!bracketNode) {
+    return;
+  }
   bracketNode.style.setProperty("--bracket-height", `${86 * rounds}px`);
 }
 
 function renderPage() {
-  const matches = JSON.parse(localStorage.getItem("matches"));
+  const matches = JSON.parse(localStorage.getItem("matches") ?? "null");
   if (!matches) {
     return;
   }
@@ -514,54 +561,39 @@ function renderPage() {
     "lower",
   );
 
-  setBracketHeight(
-    matches.boys,
-    "#boys-winners-bracket .bracket",
-    "m",
-    "upper",
-  );
-  setBracketHeight(
-    matches.girls,
-    "#girls-winners-bracket .bracket",
-    "f",
-    "upper",
-  );
-  setBracketHeight(matches.boys, "#boys-losers-bracket .bracket", "m", "lower");
-  setBracketHeight(
-    matches.girls,
-    "#girls-losers-bracket .bracket",
-    "f",
-    "lower",
-  );
+  setBracketHeight(matches.boys, "#boys-winners-bracket .bracket", "upper");
+  setBracketHeight(matches.girls, "#girls-winners-bracket .bracket", "upper");
+  setBracketHeight(matches.boys, "#boys-losers-bracket .bracket", "lower");
+  setBracketHeight(matches.girls, "#girls-losers-bracket .bracket", "lower");
 
-  matches.boys.forEach((match) => {
+  matches.boys.forEach((match: Match) => {
     renderMatch(match);
   });
-  matches.girls.forEach((match) => {
+  matches.girls.forEach((match: Match) => {
     renderMatch(match);
   });
 }
 
-function renderStrandings(matches) {
+function renderStrandings(matches: Matches) {
   const boysPlacesNode = document.getElementById("boys-standings-group");
   const girlsPlacesNode = document.getElementById("girls-standings-group");
-  boysPlacesNode.addEventListener("click", function () {
-    boysPlacesNode.classList.toggle("standings-group--open");
+  boysPlacesNode!.addEventListener("click", function () {
+    boysPlacesNode!.classList.toggle("standings-group--open");
   });
-  girlsPlacesNode.addEventListener("click", function () {
-    girlsPlacesNode.classList.toggle("standings-group--open");
+  girlsPlacesNode!.addEventListener("click", function () {
+    girlsPlacesNode!.classList.toggle("standings-group--open");
   });
   if (isGrandFinalFinished("boys")) {
-    boysPlacesNode.classList.add("standings-group--always-open");
+    boysPlacesNode!.classList.add("standings-group--always-open");
   }
   if (isGrandFinalFinished("girls")) {
-    girlsPlacesNode.classList.add("standings-group--always-open");
+    girlsPlacesNode!.classList.add("standings-group--always-open");
   }
 
   const boysStandings = getStrandings(matches, "boys");
   const girlsStandings = getStrandings(matches, "girls");
 
-  const names = JSON.parse(localStorage.getItem("names"));
+  const names = JSON.parse(localStorage.getItem("names") ?? "null");
 
   const boysStandingsNode = document.querySelector("#boys-standings");
   const girlsStandingsNode = document.querySelector("#girls-standings");
@@ -570,12 +602,14 @@ function renderStrandings(matches) {
   for (const [key, value] of Object.entries(boysStandings)) {
     const divEntry = document.createElement("div");
     divEntry.classList.add("standings__entry");
-    boysStandingsNode.appendChild(divEntry);
+    boysStandingsNode!.appendChild(divEntry);
     const spanPlace = document.createElement("span");
     spanPlace.classList.add("standings__place");
     spanPlace.textContent = key;
-    if (placeClasses[key]) {
-      spanPlace.classList.add(placeClasses[key]);
+    const placeClass =
+      placeClasses[key as unknown as keyof typeof placeClasses];
+    if (placeClass) {
+      spanPlace.classList.add(placeClass);
     }
     divEntry.appendChild(spanPlace);
     const divNames = document.createElement("div");
@@ -596,12 +630,14 @@ function renderStrandings(matches) {
   for (const [key, value] of Object.entries(girlsStandings)) {
     const divEntry = document.createElement("div");
     divEntry.classList.add("standings__entry");
-    girlsStandingsNode.appendChild(divEntry);
+    girlsStandingsNode!.appendChild(divEntry);
     const spanPlace = document.createElement("span");
     spanPlace.classList.add("standings__place");
     spanPlace.textContent = key;
-    if (placeClasses[key]) {
-      spanPlace.classList.add(placeClasses[key]);
+    const placeClass =
+      placeClasses[key as unknown as keyof typeof placeClasses];
+    if (placeClass) {
+      spanPlace.classList.add(placeClass);
     }
     divEntry.appendChild(spanPlace);
     const divNames = document.createElement("div");
@@ -622,5 +658,5 @@ function renderStrandings(matches) {
 // непосредствено вызов функции рендера
 if (document.querySelector("#boys-tournament")) {
   renderPage();
-  renderStrandings(JSON.parse(localStorage.getItem("matches")));
+  renderStrandings(JSON.parse(localStorage.getItem("matches") ?? "null"));
 }

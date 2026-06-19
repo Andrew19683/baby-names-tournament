@@ -4,53 +4,55 @@ import {
   playByeMatches,
 } from "./tournament.js";
 import { exportData, importData } from "./backup.js";
+import type { Name, Match, Matches } from "./types.js";
 
-const names = JSON.parse(localStorage.getItem("names")) || [];
+const names = JSON.parse(localStorage.getItem("names") ?? "null") || [];
 
-const inputBoyNode = document.getElementById("boys-input");
+const inputBoyNode = document.getElementById("boys-input") as HTMLInputElement;
 inputBoyNode.addEventListener("keydown", function (event) {
   if (event.key === "Enter") {
-    btnAddBoy.click();
+    btnAddBoy!.click();
   }
 });
-const inputGirlNode = document.getElementById("girls-input");
+const inputGirlNode = document.getElementById(
+  "girls-input",
+) as HTMLInputElement;
 inputGirlNode.addEventListener("keydown", function (event) {
   if (event.key === "Enter") {
     btnAddGirl.click();
   }
 });
-const btnAddBoy = document.getElementById("boys-add-btn");
-const btnAddGirl = document.getElementById("girls-add-btn");
-const ulBoysNode = document.getElementById("boys-list");
-const ulGirlsNode = document.getElementById("girls-list");
-const spanBoysCounterNode = document.getElementById("boys-count");
-const spanGirlsCounterNode = document.getElementById("girls-count");
-const btnStartTournament = document.getElementById("finish-btn");
-const btnExport = document.getElementById("export-btn");
+const btnAddBoy = document.getElementById("boys-add-btn") as HTMLButtonElement;
+const btnAddGirl = document.getElementById(
+  "girls-add-btn",
+) as HTMLButtonElement;
+const ulBoysNode = document.getElementById("boys-list") as HTMLUListElement;
+const ulGirlsNode = document.getElementById("girls-list") as HTMLUListElement;
+const spanBoysCounterNode = document.getElementById(
+  "boys-count",
+) as HTMLElement;
+const spanGirlsCounterNode = document.getElementById(
+  "girls-count",
+) as HTMLElement;
+const btnStartTournament = document.getElementById(
+  "finish-btn",
+) as HTMLButtonElement;
+const btnExport = document.getElementById("export-btn") as HTMLButtonElement;
 btnExport.addEventListener("click", exportData);
-const inputImport = document.getElementById("import-input");
+const inputImport = document.getElementById("import-input") as HTMLInputElement;
 inputImport.addEventListener("change", (event) => {
-  importData(event.target.files[0]);
+  const target = event.target as HTMLInputElement;
+  if (target.files && target.files[0]) importData(target.files[0]);
 });
 
-class Name {
-  constructor(name, gender, grid = "upper") {
-    this.name = name;
-    this.gender = gender;
-    // this.round = round; // заметил, что я round не использую нигде с именами. Пока коммент
-    this.grid = grid; // вероятно, это тоже можно удалить
-    // стоит добавить description, который будет редактироваться даже после завершения добавления имён
-  }
-}
-
-function saveNames(names) {
+function saveNames(names: Name[]) {
   localStorage.setItem("names", JSON.stringify(names));
 }
 
 function printBoys() {
   ulBoysNode.innerHTML = "";
-  const boyNames = names.filter((name) => name.gender === "m");
-  boyNames.forEach((name) => {
+  const boyNames = names.filter((name: Name) => name.gender === "boy");
+  boyNames.forEach((name: Name) => {
     const li = document.createElement("li");
     li.classList.add("name-item");
     li.id = `name-${name.name}`;
@@ -63,7 +65,7 @@ function printBoys() {
     btnDel.textContent = "✕";
     btnDel.id = `delete-${name.name}`;
     btnDel.addEventListener("click", function () {
-      const index = names.findIndex((n) => n.name === name.name);
+      const index = names.findIndex((n: Name) => n.name === name.name);
       if (index !== -1) {
         names.splice(index, 1);
         saveNames(names);
@@ -80,8 +82,8 @@ function printBoys() {
 
 function printGirls() {
   ulGirlsNode.innerHTML = "";
-  const girlNames = names.filter((name) => name.gender === "f");
-  girlNames.forEach((name) => {
+  const girlNames = names.filter((name: Name) => name.gender === "girl");
+  girlNames.forEach((name: Name) => {
     const li = document.createElement("li");
     li.classList.add("name-item");
     li.id = `name-${name.name}`;
@@ -94,7 +96,7 @@ function printGirls() {
     btnDel.textContent = "✕";
     btnDel.id = `delete-${name.name}`;
     btnDel.addEventListener("click", function () {
-      const index = names.findIndex((n) => n.name === name.name);
+      const index = names.findIndex((n: Name) => n.name === name.name);
       if (index !== -1) {
         names.splice(index, 1);
         saveNames(names);
@@ -120,7 +122,7 @@ btnAddBoy.addEventListener("click", function () {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join("-");
 
-  if (names.some((n) => n.name === inputValue)) {
+  if (names.some((n: Name) => n.name === inputValue)) {
     alert("Такое имя уже есть!");
     return;
   }
@@ -129,7 +131,11 @@ btnAddBoy.addEventListener("click", function () {
     return;
   }
 
-  const name = new Name(inputValue, "m", 0, "upper");
+  const name: Name = {
+    name: inputValue,
+    gender: "boy",
+    id: 0,
+  };
 
   names.push(name);
   saveNames(names);
@@ -149,7 +155,7 @@ btnAddGirl.addEventListener("click", function () {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join("-");
 
-  if (names.some((n) => n.name === inputValue)) {
+  if (names.some((n: Name) => n.name === inputValue)) {
     alert("Такое имя уже есть!");
     return;
   }
@@ -158,7 +164,11 @@ btnAddGirl.addEventListener("click", function () {
     return;
   }
 
-  const name = new Name(inputValue, "f", 0, "upper");
+  const name: Name = {
+    name: inputValue,
+    gender: "girl",
+    id: 0,
+  };
 
   names.push(name);
   saveNames(names);
@@ -168,14 +178,14 @@ btnAddGirl.addEventListener("click", function () {
 });
 
 btnStartTournament.addEventListener("click", function () {
-  const boys = names.filter((name) => name.gender === "m");
-  const girls = names.filter((name) => name.gender === "f");
-  startTournament(boys);
-  startTournament(girls);
+  const boys = names.filter((name: Name) => name.gender === "boy");
+  const girls = names.filter((name: Name) => name.gender === "girl");
+  startTournament(boys, "boy");
+  startTournament(girls, "girl");
   saveNames([...boys, ...girls]);
-  const matches = {};
-  matches.boys = generateMatches(boys, "m");
-  matches.girls = generateMatches(girls, "f");
+  const matches = {} as Matches;
+  matches.boys = generateMatches(boys, "boys");
+  matches.girls = generateMatches(girls, "girls");
   playByeMatches(matches); //  сразу сыграем матчи, где есть bye
   localStorage.setItem("matches", JSON.stringify(matches));
   window.location.href = "choice.html";
