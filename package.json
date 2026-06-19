@@ -8,10 +8,15 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "live-server src --open=index.html"
+    "dev": "live-server dist --open=index.html",
+    "build": "tsc && npm run copy",
+    "copy": "cp -r src/pages dist/pages && cp src/style.css dist/style.css && cp src/index.html dist/index.html"
   },
   "dependencies": {
     "live-server": "^1.2.2",
     "serve": "^14.2.6"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
   }
 }
