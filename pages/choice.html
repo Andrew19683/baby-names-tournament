@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <script>
+    if (!localStorage.getItem("matches")) {
+      window.location.href = "table.html"
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Выбор имени</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="../style.css">
+</head>
+
+<!--
+  Класс на <body> определяет цветовую схему:
+    gender-boys  → голубой акцент
+    gender-girls → розовый акцент
+  JS переключает его в зависимости от текущего матча.
+-->
+<body class="gender-boys">
+
+  <header class="page-header">
+    <h1>Выбери имя, которое больше нравится</h1>
+  </header>
+
+  <main class="choice-wrapper">
+
+    <div class="name-cards">
+
+      <div id="name-card-1" class="name-card">
+        <button class="name-card__edit-btn" id="edit-btn-1" aria-label="Добавить описание">✎</button>
+        <span class="name-card__text">Имя 1</span>
+        <p class="name-card__desc" id="desc-1"></p>
+      </div>
+
+      <span class="name-cards__divider">или</span>
+
+      <div id="name-card-2" class="name-card">
+        <button class="name-card__edit-btn" id="edit-btn-2" aria-label="Добавить описание">✎</button>
+        <span class="name-card__text">Имя 2</span>
+        <p class="name-card__desc" id="desc-2"></p>
+      </div>
+
+    </div>
+
+    <!--
+      JS снимает disabled после выбора карточки.
+      JS добавляет .name-card--selected на кликнутую карточку
+      и убирает с другой.
+    -->
+    <button id="choose-btn" class="choose-btn" disabled>Выбрать</button>
+
+    <!--
+      JS добавляет .choice-wrapper--limit-reached на <main>,
+      когда дневной лимит исчерпан — карточки и кнопка прячутся,
+      это сообщение появляется.
+    -->
+    <div class="limit-message">
+      <p class="limit-message__title">Сегодня все имена уже выбраны.</p>
+      <p class="limit-message__subtitle">Увидимся завтра.</p>
+      <div class="limit-message__divider"></div>
+      <p class="limit-message__link-label">Посмотреть турнирную таблицу можно тут:</p>
+      <a href="../pages/tournament.html" class="limit-message__link" id="tournament-link">Турнирная таблица</a>
+      <p class="limit-message__warning">⚠ Нежелательно — это может повлиять на вашу предвзятость в выборе.</p>
+    </div>
+
+    <div class="io-controls">
+      <label class="btn-io btn-import" id="import-label">
+        ↑ Импорт
+        <input type="file" id="import-input" accept=".json">
+      </label>
+      <button class="btn-io btn-export" id="export-btn">↓ Экспорт</button>
+    </div>
+
+  </main>
+
+  <div id="edit-popup" class="popup popup--edit">
+    <div class="popup__card">
+      <p class="popup__eyebrow">Описание имени</p>
+      <div class="popup__divider"></div>
+      <textarea
+        id="edit-textarea"
+        class="edit-textarea"
+        placeholder="Например: в честь дедушки…"
+        rows="5"
+      ></textarea>
+      <div class="edit-popup__actions">
+        <button class="edit-popup__cancel" id="edit-cancel">Отмена</button>
+        <button class="edit-popup__save" id="edit-save">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="grand-final-popup" class="popup">
+    <div class="popup__card">
+      <p class="popup__ornament">✦ &nbsp; ✦ &nbsp; ✦</p>
+      <p class="popup__eyebrow">Турнир завершён</p>
+      <p class="popup__gender-label">Победитель среди мальчиков</p>
+      <div class="popup__divider"></div>
+      <p class="popup__name">Имя</p>
+    </div>
+  </div>
+
+  <script src="../features/choice.js" type="module"></script>
+
+</body>
+</html>
