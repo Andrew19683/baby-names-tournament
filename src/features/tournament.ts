@@ -329,7 +329,7 @@ function getStrandings(matches: Matches, gender: GenderPlural) {
   }, 1);
   // и посчитаем, сколько всего было участников
   const namesCount = JSON.parse(localStorage.getItem("names") ?? "null").filter(
-    (name: Name) => name.gender === gender + "s",
+    (name: Name) => name.gender === gender.slice(0, -1) && !name.isBye,
   ).length;
 
   // сгруппируем: номер раунда -> массив проигравших
@@ -372,9 +372,7 @@ function getStrandings(matches: Matches, gender: GenderPlural) {
       endPlace > startPlace ? `${startPlace}-${endPlace}` : `${startPlace}`; // отформатируем ключ для отрисовки
     // теперь создадим ключ, если еще его нет, и заполним именами
     if (matchesByRound.has(i)) {
-      matchesByRound.get(i)!.forEach(() => {
-        standings[key] = matchesByRound.get(i)!.map((match) => match.name);
-      });
+      standings[key] = matchesByRound.get(i)!.map((match) => match.name);
     }
     // если ключ так и не создали - заполним его TBD массивом
     if (!matchesByRound.has(i)) {
@@ -592,8 +590,6 @@ function renderStrandings(matches: Matches) {
 
   const boysStandings = getStrandings(matches, "boys");
   const girlsStandings = getStrandings(matches, "girls");
-
-  const names = JSON.parse(localStorage.getItem("names") ?? "null");
 
   const boysStandingsNode = document.querySelector("#boys-standings");
   const girlsStandingsNode = document.querySelector("#girls-standings");
