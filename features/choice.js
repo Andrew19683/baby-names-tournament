@@ -67,8 +67,8 @@ const linkToTournament = document.getElementById("tournament-link");
 linkToTournament.addEventListener("click", () => {
     location.href = "tournament.html";
 });
-let winnerId; // для определения победившего имени
-let loserId; // для определения проигравшего имени
+let winnerId = 0; // для определения победившего имени
+let loserId = 0; // для определения проигравшего имени
 let currentEditingName; // для определения какому имени редактируем описание
 function isSameDay(d1, d2) {
     return (d1.getFullYear() === d2.getFullYear() &&
@@ -201,7 +201,10 @@ function renderDescriptions() {
     name2DescriptionNode.textContent = getDescription(name2Node.textContent);
 }
 if (window.location.pathname.includes("choice.html")) {
-    renderMatch(getRandomMatch());
+    const randomMatch = getRandomMatch();
+    if (randomMatch) {
+        renderMatch(randomMatch);
+    }
 }
 function checkForUnfinishedMatches() {
     const matches = JSON.parse(localStorage.getItem("matches") ?? "null");

@@ -273,9 +273,7 @@ function getStrandings(matches, gender) {
         const key = endPlace > startPlace ? `${startPlace}-${endPlace}` : `${startPlace}`; // отформатируем ключ для отрисовки
         // теперь создадим ключ, если еще его нет, и заполним именами
         if (matchesByRound.has(i)) {
-            matchesByRound.get(i).forEach(() => {
-                standings[key] = matchesByRound.get(i).map((match) => match.name);
-            });
+            standings[key] = matchesByRound.get(i).map((match) => match.name);
         }
         // если ключ так и не создали - заполним его TBD массивом
         if (!matchesByRound.has(i)) {
