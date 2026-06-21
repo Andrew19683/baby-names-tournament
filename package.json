@@ -10,13 +10,15 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "live-server dist --open=index.html",
     "build": "tsc && npm run copy",
-    "copy": "cp -r src/pages dist/pages && cp src/style.css dist/style.css && cp src/index.html dist/index.html"
+    "copy": "cp -r src/pages dist/pages && cp src/style.css dist/style.css && cp src/index.html dist/index.html",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "live-server": "^1.2.2",
     "serve": "^14.2.6"
   },
   "devDependencies": {
+    "gh-pages": "^6.3.0",
     "typescript": "^6.0.3"
   }
 }
