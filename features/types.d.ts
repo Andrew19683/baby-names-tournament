@@ -25,8 +25,8 @@ export interface Match {
     isGridFinal?: boolean;
 }
 export interface Matches {
-    boys?: Match[];
-    girls?: Match[];
+    boys: Match[];
+    girls: Match[];
 }
 export interface Name {
     name: string;

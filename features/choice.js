@@ -1,6 +1,6 @@
 import { findMatchById, resolveMatch, playByeMatches } from "./tournament.js";
 import { exportData, importData } from "./backup.js";
-const DAILY_LIMIT = 200; // можно конфигурировать, в будущем можно попробовать сделать её вычисляемой
+const DAILY_LIMIT = 3; // можно конфигурировать, в будущем можно попробовать сделать её вычисляемой
 // карточки имён
 const divName1Node = document.getElementById("name-card-1");
 const name1Node = divName1Node.querySelector(".name-card__text");

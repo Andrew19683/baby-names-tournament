@@ -45,6 +45,10 @@ export function startTournament(names, gender) {
 export function generateMatches(names, gender) {
     // протестировал для 8 и 16 участников. Понятия не имею, как оно будет на других степенях двойки, но выглядит корректно
     const matches = []; // сюда закидываем все созданные матчи
+    // если передали пустой массив - значит ничего не генерируем и возвращаем пустой массив
+    if (names.length === 0) {
+        return matches;
+    }
     let matchId = 0; // глобальный счетчик матчей верхней сетки
     let round = 1; // текущий раунд
     let loserMatchId = 100; // счетчик для матчей нижней сетки, начинаем с 100, чтобы не пересекаться с верхней сеткой
@@ -229,6 +233,10 @@ export function playByeMatches(matches) {
     });
 }
 function getStrandings(matches, gender) {
+    // Сразу проверим, а есть ли вообще матчи
+    if (matches[gender].length === 0) {
+        return undefined;
+    }
     // Сперва фильтруем только по нижней сетке
     const lowerMatches = matches[gender].filter((match) => match.grid === "lower");
     // определим максимальный номер раунда нижней сетки
@@ -413,6 +421,14 @@ function renderPage() {
     if (!matches) {
         return;
     }
+    if (matches.boys.length === 0) {
+        const boysTournamentContainer = document.querySelector("#boys-tournament");
+        boysTournamentContainer.hidden = true;
+    }
+    if (matches.girls.length === 0) {
+        const girlsTournamentContainer = document.querySelector("#girls-tournament");
+        girlsTournamentContainer.hidden = true;
+    }
     renderRoundsNumbers(matches, "#boys-winners-bracket .bracket-headers", "boys", "upper");
     renderRoundsNumbers(matches, "#boys-losers-bracket .bracket-headers", "boys", "lower");
     renderRoundsNumbers(matches, "#girls-winners-bracket .bracket-headers", "girls", "upper");
@@ -430,7 +446,13 @@ function renderPage() {
 }
 function renderStrandings(matches) {
     const boysPlacesNode = document.getElementById("boys-standings-group");
+    if (matches.boys.length === 0) {
+        boysPlacesNode.hidden = true;
+    }
     const girlsPlacesNode = document.getElementById("girls-standings-group");
+    if (matches.girls.length === 0) {
+        girlsPlacesNode.hidden = true;
+    }
     boysPlacesNode.addEventListener("click", function () {
         boysPlacesNode.classList.toggle("standings-group--open");
     });
@@ -448,56 +470,60 @@ function renderStrandings(matches) {
     const boysStandingsNode = document.querySelector("#boys-standings");
     const girlsStandingsNode = document.querySelector("#girls-standings");
     // отрисуем мальчиков
-    for (const [key, value] of Object.entries(boysStandings)) {
-        const divEntry = document.createElement("div");
-        divEntry.classList.add("standings__entry");
-        boysStandingsNode.appendChild(divEntry);
-        const spanPlace = document.createElement("span");
-        spanPlace.classList.add("standings__place");
-        spanPlace.textContent = key;
-        const placeClass = placeClasses[key];
-        if (placeClass) {
-            spanPlace.classList.add(placeClass);
-        }
-        divEntry.appendChild(spanPlace);
-        const divNames = document.createElement("div");
-        divNames.classList.add("standings__names");
-        divEntry.appendChild(divNames);
-        value.forEach((name) => {
-            const spanName = document.createElement("span");
-            spanName.classList.add("standings__name");
-            spanName.textContent = name;
-            if (name === "—") {
-                spanName.classList.add("standings__name--pending");
+    if (boysStandings) {
+        for (const [key, value] of Object.entries(boysStandings)) {
+            const divEntry = document.createElement("div");
+            divEntry.classList.add("standings__entry");
+            boysStandingsNode.appendChild(divEntry);
+            const spanPlace = document.createElement("span");
+            spanPlace.classList.add("standings__place");
+            spanPlace.textContent = key;
+            const placeClass = placeClasses[key];
+            if (placeClass) {
+                spanPlace.classList.add(placeClass);
             }
-            divNames.appendChild(spanName);
-        });
+            divEntry.appendChild(spanPlace);
+            const divNames = document.createElement("div");
+            divNames.classList.add("standings__names");
+            divEntry.appendChild(divNames);
+            value.forEach((name) => {
+                const spanName = document.createElement("span");
+                spanName.classList.add("standings__name");
+                spanName.textContent = name;
+                if (name === "—") {
+                    spanName.classList.add("standings__name--pending");
+                }
+                divNames.appendChild(spanName);
+            });
+        }
     }
     // отрисуем девочек
-    for (const [key, value] of Object.entries(girlsStandings)) {
-        const divEntry = document.createElement("div");
-        divEntry.classList.add("standings__entry");
-        girlsStandingsNode.appendChild(divEntry);
-        const spanPlace = document.createElement("span");
-        spanPlace.classList.add("standings__place");
-        spanPlace.textContent = key;
-        const placeClass = placeClasses[key];
-        if (placeClass) {
-            spanPlace.classList.add(placeClass);
-        }
-        divEntry.appendChild(spanPlace);
-        const divNames = document.createElement("div");
-        divNames.classList.add("standings__names");
-        divEntry.appendChild(divNames);
-        value.forEach((name) => {
-            const spanName = document.createElement("span");
-            spanName.classList.add("standings__name");
-            spanName.textContent = name;
-            if (name === "—") {
-                spanName.classList.add("standings__name--pending");
+    if (girlsStandings) {
+        for (const [key, value] of Object.entries(girlsStandings)) {
+            const divEntry = document.createElement("div");
+            divEntry.classList.add("standings__entry");
+            girlsStandingsNode.appendChild(divEntry);
+            const spanPlace = document.createElement("span");
+            spanPlace.classList.add("standings__place");
+            spanPlace.textContent = key;
+            const placeClass = placeClasses[key];
+            if (placeClass) {
+                spanPlace.classList.add(placeClass);
             }
-            divNames.appendChild(spanName);
-        });
+            divEntry.appendChild(spanPlace);
+            const divNames = document.createElement("div");
+            divNames.classList.add("standings__names");
+            divEntry.appendChild(divNames);
+            value.forEach((name) => {
+                const spanName = document.createElement("span");
+                spanName.classList.add("standings__name");
+                spanName.textContent = name;
+                if (name === "—") {
+                    spanName.classList.add("standings__name--pending");
+                }
+                divNames.appendChild(spanName);
+            });
+        }
     }
 }
 // непосредствено вызов функции рендера
