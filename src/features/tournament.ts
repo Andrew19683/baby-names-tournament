@@ -60,6 +60,12 @@ export function startTournament(names: Name[], gender: Gender) {
 export function generateMatches(names: Name[], gender: GenderPlural) {
   // протестировал для 8 и 16 участников. Понятия не имею, как оно будет на других степенях двойки, но выглядит корректно
   const matches: Match[] = []; // сюда закидываем все созданные матчи
+
+  // если передали пустой массив - значит ничего не генерируем и возвращаем пустой массив
+  if (names.length === 0) {
+    return matches;
+  }
+
   let matchId = 0; // глобальный счетчик матчей верхней сетки
   let round = 1; // текущий раунд
   let loserMatchId = 100; // счетчик для матчей нижней сетки, начинаем с 100, чтобы не пересекаться с верхней сеткой
@@ -318,7 +324,15 @@ export function playByeMatches(matches: Matches) {
   });
 }
 
-function getStrandings(matches: Matches, gender: GenderPlural) {
+function getStrandings(
+  matches: Matches,
+  gender: GenderPlural,
+): Record<number | string, string[]> | undefined {
+  // Сразу проверим, а есть ли вообще матчи
+  if (matches[gender].length === 0) {
+    return undefined;
+  }
+
   // Сперва фильтруем только по нижней сетке
   const lowerMatches: Match[] = matches[gender]!.filter(
     (match: Match) => match.grid === "lower",
@@ -534,6 +548,20 @@ function renderPage() {
   if (!matches) {
     return;
   }
+
+  if (matches.boys.length === 0) {
+    const boysTournamentContainer = document.querySelector(
+      "#boys-tournament",
+    ) as HTMLElement;
+    boysTournamentContainer.hidden = true;
+  }
+  if (matches.girls.length === 0) {
+    const girlsTournamentContainer = document.querySelector(
+      "#girls-tournament",
+    ) as HTMLElement;
+    girlsTournamentContainer.hidden = true;
+  }
+
   renderRoundsNumbers(
     matches,
     "#boys-winners-bracket .bracket-headers",
@@ -573,8 +601,18 @@ function renderPage() {
 }
 
 function renderStrandings(matches: Matches) {
-  const boysPlacesNode = document.getElementById("boys-standings-group");
-  const girlsPlacesNode = document.getElementById("girls-standings-group");
+  const boysPlacesNode = document.getElementById(
+    "boys-standings-group",
+  ) as HTMLElement;
+  if (matches.boys.length === 0) {
+    boysPlacesNode.hidden = true;
+  }
+  const girlsPlacesNode = document.getElementById(
+    "girls-standings-group",
+  ) as HTMLElement;
+  if (matches.girls.length === 0) {
+    girlsPlacesNode.hidden = true;
+  }
   boysPlacesNode!.addEventListener("click", function () {
     boysPlacesNode!.classList.toggle("standings-group--open");
   });
@@ -595,59 +633,63 @@ function renderStrandings(matches: Matches) {
   const girlsStandingsNode = document.querySelector("#girls-standings");
 
   // отрисуем мальчиков
-  for (const [key, value] of Object.entries(boysStandings)) {
-    const divEntry = document.createElement("div");
-    divEntry.classList.add("standings__entry");
-    boysStandingsNode!.appendChild(divEntry);
-    const spanPlace = document.createElement("span");
-    spanPlace.classList.add("standings__place");
-    spanPlace.textContent = key;
-    const placeClass =
-      placeClasses[key as unknown as keyof typeof placeClasses];
-    if (placeClass) {
-      spanPlace.classList.add(placeClass);
-    }
-    divEntry.appendChild(spanPlace);
-    const divNames = document.createElement("div");
-    divNames.classList.add("standings__names");
-    divEntry.appendChild(divNames);
-    value.forEach((name) => {
-      const spanName = document.createElement("span");
-      spanName.classList.add("standings__name");
-      spanName.textContent = name;
-      if (name === "—") {
-        spanName.classList.add("standings__name--pending");
+  if (boysStandings) {
+    for (const [key, value] of Object.entries(boysStandings)) {
+      const divEntry = document.createElement("div");
+      divEntry.classList.add("standings__entry");
+      boysStandingsNode!.appendChild(divEntry);
+      const spanPlace = document.createElement("span");
+      spanPlace.classList.add("standings__place");
+      spanPlace.textContent = key;
+      const placeClass =
+        placeClasses[key as unknown as keyof typeof placeClasses];
+      if (placeClass) {
+        spanPlace.classList.add(placeClass);
       }
-      divNames.appendChild(spanName);
-    });
+      divEntry.appendChild(spanPlace);
+      const divNames = document.createElement("div");
+      divNames.classList.add("standings__names");
+      divEntry.appendChild(divNames);
+      value.forEach((name) => {
+        const spanName = document.createElement("span");
+        spanName.classList.add("standings__name");
+        spanName.textContent = name;
+        if (name === "—") {
+          spanName.classList.add("standings__name--pending");
+        }
+        divNames.appendChild(spanName);
+      });
+    }
   }
 
   // отрисуем девочек
-  for (const [key, value] of Object.entries(girlsStandings)) {
-    const divEntry = document.createElement("div");
-    divEntry.classList.add("standings__entry");
-    girlsStandingsNode!.appendChild(divEntry);
-    const spanPlace = document.createElement("span");
-    spanPlace.classList.add("standings__place");
-    spanPlace.textContent = key;
-    const placeClass =
-      placeClasses[key as unknown as keyof typeof placeClasses];
-    if (placeClass) {
-      spanPlace.classList.add(placeClass);
-    }
-    divEntry.appendChild(spanPlace);
-    const divNames = document.createElement("div");
-    divNames.classList.add("standings__names");
-    divEntry.appendChild(divNames);
-    value.forEach((name) => {
-      const spanName = document.createElement("span");
-      spanName.classList.add("standings__name");
-      spanName.textContent = name;
-      if (name === "—") {
-        spanName.classList.add("standings__name--pending");
+  if (girlsStandings) {
+    for (const [key, value] of Object.entries(girlsStandings)) {
+      const divEntry = document.createElement("div");
+      divEntry.classList.add("standings__entry");
+      girlsStandingsNode!.appendChild(divEntry);
+      const spanPlace = document.createElement("span");
+      spanPlace.classList.add("standings__place");
+      spanPlace.textContent = key;
+      const placeClass =
+        placeClasses[key as unknown as keyof typeof placeClasses];
+      if (placeClass) {
+        spanPlace.classList.add(placeClass);
       }
-      divNames.appendChild(spanName);
-    });
+      divEntry.appendChild(spanPlace);
+      const divNames = document.createElement("div");
+      divNames.classList.add("standings__names");
+      divEntry.appendChild(divNames);
+      value.forEach((name) => {
+        const spanName = document.createElement("span");
+        spanName.classList.add("standings__name");
+        spanName.textContent = name;
+        if (name === "—") {
+          spanName.classList.add("standings__name--pending");
+        }
+        divNames.appendChild(spanName);
+      });
+    }
   }
 }
 

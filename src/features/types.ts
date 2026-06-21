@@ -28,8 +28,8 @@ export interface Match {
 }
 
 export interface Matches {
-  boys?: Match[];
-  girls?: Match[];
+  boys: Match[];
+  girls: Match[];
 }
 
 export interface Name {
